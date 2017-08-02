@@ -1,0 +1,3 @@
+package: github.com/codekoala/go-aws-lanes
+import:
+- package: gopkg.in/yaml.v2
