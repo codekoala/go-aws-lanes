@@ -99,6 +99,10 @@ func ConnectToServer(svr *lanes.Server) (err error) {
 		exists     bool
 	)
 
+	if profile == nil {
+		return fmt.Errorf("invalid profile selected")
+	}
+
 	fmt.Printf("Connecting to server %s...\n", svr)
 	if sshProfile, exists = profile.SSH.Mods[svr.Lane]; !exists {
 		return fmt.Errorf("No SSH profile for lane %q\n", svr.Lane)

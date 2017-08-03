@@ -2,8 +2,8 @@ package lanes
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -53,27 +53,26 @@ func (this *Profile) Deactivate() {
 }
 
 // GetCurrentProfile loads the currently configured lane profile from the filesystem.
-func (this *Config) GetCurrentProfile() *Profile {
-	var (
-		in   []byte
-		prof = new(Profile)
-
-		err error
-	)
+func (this *Config) GetCurrentProfile() (prof *Profile, err error) {
+	var in []byte
 
 	ppath := this.GetProfilePath()
 
 	if in, err = ioutil.ReadFile(ppath); err != nil {
-		log.Fatalf("unable to read lane profile: %s", err)
+		err = fmt.Errorf("unable to read lane profile: %s", err)
+		return
 	}
 
+	prof = new(Profile)
 	if err = yaml.Unmarshal(in, prof); err != nil {
-		log.Fatalf("unable to parse lane profile (%s): %s", ppath, err)
+		err = fmt.Errorf("unable to parse lane profile (%s): %s", ppath, err)
+		return
 	}
 
 	if err = prof.Validate(); err != nil {
-		log.Fatalf("invalid profile: %s", err)
+		err = fmt.Errorf("invalid profile: %s", err)
+		return
 	}
 
-	return prof
+	return prof, nil
 }

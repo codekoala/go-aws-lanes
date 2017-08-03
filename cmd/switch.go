@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +12,9 @@ var switchCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		profile := args[0]
 		if err := Config.SetProfile(profile); err != nil {
-			log.Printf("Failed to switch profile: %s", err)
+			cmd.Printf("Failed to switch profile: %s\n", err)
 		} else {
-			log.Printf("Switched to profile %q", profile)
+			cmd.Printf("Switched to profile %q\n", profile)
 		}
 	},
 }
