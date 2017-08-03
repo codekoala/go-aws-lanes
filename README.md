@@ -12,7 +12,7 @@ multiple sets of AWS credentials and perform the following operations:
   optionally setting up tunnels to locally access services running on a given
   instance.
 * copy files to/from one or more EC2 instances (TODO)
-* run commands on one or more EC2 instances (TODO)
+* run commands on one or more EC2 instances
 
 ## Sample Output
 

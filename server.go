@@ -24,8 +24,10 @@ type Server struct {
 	IP   string
 }
 
-func (this *Server) Login(profile *ssh.Profile) error {
-	cmd := exec.Command("ssh", profile.SSHArgs(this.IP)...)
+func (this *Server) Login(profile *ssh.Profile, args []string) error {
+	sshArgs := append(profile.SSHArgs(this.IP), args...)
+
+	cmd := exec.Command("ssh", sshArgs...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 
@@ -43,57 +42,37 @@ var sshCmd = &cobra.Command{
 
 func ChooseServer(servers []*lanes.Server) *lanes.Server {
 	var (
-		input string
-		idx   int
-		err   error
+		idx int
+		err error
 	)
 
 	if err = lanes.DisplayServers(servers); err != nil {
 		fmt.Println(err.Error())
-		goto Cancel
+		os.Exit(1)
 	}
 
-	for {
-		fmt.Printf("\nWhich server? ")
-		if _, err = fmt.Scanln(&input); err != nil {
-			if err == io.EOF {
-				goto Cancel
-			}
-
-			switch err.Error() {
-			case "unexpected newline":
-				goto Cancel
-			default:
-				fmt.Printf("Invalid input: %s\n\n", err)
-			}
-
-			continue
-		}
-
+	parse := func(input string) (err error) {
 		if idx, err = strconv.Atoi(input); err != nil {
-			fmt.Println("Invalid input; please enter a number.")
-			continue
+			return fmt.Errorf("Invalid input; please enter a number.")
 		}
 
 		if idx < 1 || idx > len(servers) {
-			fmt.Println("Invalid input; please enter a valid server number.")
-			continue
+			return fmt.Errorf("Invalid input; please enter a valid server number.")
 		}
 
-		break
+		return nil
+	}
+
+	if err = Prompt("Which server?", parse); err != nil {
+		fmt.Println("Canceled.")
+		os.Exit(1)
 	}
 
 	return servers[idx-1]
-
-Cancel:
-	fmt.Println("Canceled.")
-	os.Exit(0)
-
-	return nil
 }
 
 // ConnectToServer uses the specified server's lane to correctly connect to the desired server.
-func ConnectToServer(svr *lanes.Server) (err error) {
+func ConnectToServer(svr *lanes.Server, args ...string) (err error) {
 	var (
 		sshProfile *ssh.Profile
 		exists     bool
@@ -108,7 +87,7 @@ func ConnectToServer(svr *lanes.Server) (err error) {
 		return fmt.Errorf("No SSH profile for lane %q\n", svr.Lane)
 	}
 
-	if err = svr.Login(sshProfile); err != nil {
+	if err = svr.Login(sshProfile, args); err != nil {
 		return fmt.Errorf("connection error: %s\n", err)
 	}
 
