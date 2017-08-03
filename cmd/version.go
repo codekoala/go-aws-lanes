@@ -13,8 +13,9 @@ var versionCmd = &cobra.Command{
 	Short: "Display Lanes version",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Println("lanes", version.String())
-		cmd.Println("Build date:", version.BuildDate)
-		cmd.Println("Go:", runtime.Version())
+		cmd.Println("lanes", version.Version)
+		cmd.Println("Commit:\t\t", version.Commit)
+		cmd.Println("Build date:\t", version.BuildDate)
+		cmd.Println("Go:\t\t", runtime.Version())
 	},
 }

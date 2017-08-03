@@ -1,5 +1,5 @@
 REPO ?= github.com/codekoala/go-aws-lanes
-TAG ?= dev
+TAG ?= $(shell git rev-parse HEAD)-dev
 BUILD_DATE := $(shell date +%FT%T%z)
 
 all: linux osx checksums
@@ -12,7 +12,7 @@ osx:
 
 build: bin
 	$(eval SUFFIX=_$(GOOS)_$(GOARCH))
-	go build -ldflags "-s -X $(REPO)/version.Tag=$(TAG) -X $(REPO)/version.BuildDate=$(BUILD_DATE)" -o ./bin/lanes$(SUFFIX) ./cmd/lanes
+	go build -ldflags "-s -X $(REPO)/version.Commit=$(TAG) -X $(REPO)/version.BuildDate=$(BUILD_DATE)" -o ./bin/lanes$(SUFFIX) ./cmd/lanes
 
 checksums:
 	cd ./bin/; sha256sum lanes* > SHA256SUMS

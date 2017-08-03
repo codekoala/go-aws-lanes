@@ -7,12 +7,12 @@ import (
 
 var (
 	Version   = "v0.1.0"
-	Tag       = "dev"
+	Commit    = "dev"
 	BuildDate string
 )
 
 func String() string {
-	return fmt.Sprintf("%s-%s", Version, Tag)
+	return fmt.Sprintf("%s-%s", Version, Commit)
 }
 
 func Full() string {
