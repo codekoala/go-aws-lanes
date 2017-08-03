@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
@@ -13,6 +15,7 @@ var switchCmd = &cobra.Command{
 		profile := args[0]
 		if err := Config.SetProfile(profile); err != nil {
 			cmd.Printf("Failed to switch profile: %s\n", err)
+			os.Exit(1)
 		} else {
 			cmd.Printf("Switched to profile %q\n", profile)
 		}

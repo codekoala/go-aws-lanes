@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +24,8 @@ type InputParseFunction func(string) error
 func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 	fmt.Printf("Current profile: %s\n", Config.Profile)
 	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
-		return fmt.Errorf("invalid profile selected")
+		fmt.Println("invalid profile selected")
+		os.Exit(1)
 	}
 
 	profile.Activate()

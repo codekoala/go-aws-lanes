@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"os"
+	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -16,11 +16,10 @@ var listCmd = &cobra.Command{
 
 	PersistentPreRunE: RequireProfile,
 
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		var (
 			lane    string
 			servers []*lanes.Server
-			err     error
 		)
 
 		if len(args) > 0 {
@@ -28,10 +27,9 @@ var listCmd = &cobra.Command{
 		}
 
 		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
-			cmd.Printf("failed to fetch servers: %s\n", err)
-			os.Exit(1)
+			return fmt.Errorf("failed to fetch servers: %s\n", err)
 		}
 
-		lanes.DisplayServers(servers)
+		return lanes.DisplayServers(servers)
 	},
 }

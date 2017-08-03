@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/codekoala/go-aws-lanes"
 	"github.com/codekoala/go-aws-lanes/cmd"
@@ -11,10 +12,12 @@ func main() {
 	var err error
 
 	if cmd.Config, err = lanes.LoadConfig(); err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
 	if err = cmd.Execute(); err != nil {
-		log.Fatalln(err.Error())
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 }
