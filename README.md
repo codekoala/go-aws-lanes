@@ -13,7 +13,6 @@ multiple sets of AWS credentials and perform the following operations:
 
 ## Sample Output
 
-```
     $ lanes ls
     Current profile: foo
     Fetching servers... done
@@ -50,7 +49,6 @@ multiple sets of AWS credentials and perform the following operations:
     │ 1   │ prod             │ prod-01                     │ 1.2.3.6        │ i-12341236          │
     │ 2   │ prod             │ prod-02                     │ 1.2.3.7        │ i-12341237          │
     ╰─────┴──────────────────┴──────────────────────────────────────────────┴─────────────────────╯
-```
 
 ## What Are Lanes?
 
