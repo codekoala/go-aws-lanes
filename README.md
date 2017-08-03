@@ -88,6 +88,9 @@ ssh:
       identity: ~/.ssh/id_rsa_demo_prod
 ```
 
+You can create additional profiles by creating new YAML files using this
+pattern: ``$HOME/.lanes/[profile name].yml``
+
 ### Environment Variables
 
 ``lanes`` supports a handful of environment variables to quickly change
@@ -102,9 +105,86 @@ behavior:
 
 ## Usage
 
+### Selecting Profiles
+
 When executing ``lanes``, the desired profile is determined first by the
 ``LANES_PROFILE`` environment variable. If this is not set, the profile
 configured in ``$HOME/.lanes/lanes.yml`` will be used.
+
+If you wish to quickly change your default profile, you may use ``lanes switch
+[new profile name]``.
+
+Examples:
+
+```bash
+# override current profile for a single invocation
+$ LANES_PROFILE=demo lanes ls
+
+# override current profile for the rest of the terminal session
+$ export LANES_PROFILE=demo
+$ lanes ls
+
+# set the default profile to $HOME/.lanes/home-profile.yml
+$ lanes switch home-profile
+```
+
+### Listing EC2 Instances
+
+Examples:
+
+```bash
+# list all instances for the current profile
+$ lanes list
+$ lanes ls
+
+# list all instances in the "prod" lane for the current profile
+$ lanes list prod
+$ lanes ls prod
+```
+
+### SSH Into Instance
+
+Examples:
+
+```bash
+# list all instances, prompting for the instance to connect to
+$ lanes ssh
+
+# list all instances in the "prod" lane, prompting for the instance to connect to
+$ lanes ssh prod
+```
+
+### Execute Command On All Lane Instances
+
+Examples:
+
+```bash
+# list all instances in the "prod" lane, confirming before executing the
+# specified command on each instance
+$ lanes sh prod 'ls -l'
+
+# list all instances in the "prod" lane, executing the specified command on
+# each instance without confirmation
+$ lanes sh prod --confirm 'ls -l'
+```
+
+### Push Files to All Lane Instances
+
+Examples:
+
+```bash
+# list all instances in the "dev" lane, confirming before copying localfile.txt
+# to /tmp/localfile.txt on all instances
+$ lanes file push dev localfile.txt /tmp/
+
+# list all instances in the "dev" lane, confirming before copying localfile.txt
+# and magic.log to /tmp/ on all instances
+$ lanes file push dev localfile.txt magic.log /tmp/
+
+# list all instances in the "dev" lane, copying localfile.txt and magic.log to
+# /tmp/ on all instances without confirmation
+$ lanes file push dev --confirm localfile.txt magic.log /tmp/
+```
 
 ## Credits
 
