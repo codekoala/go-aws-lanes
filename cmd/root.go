@@ -37,6 +37,8 @@ func init() {
 	RootCmd.AddCommand(shCmd)
 	RootCmd.AddCommand(sshCmd)
 	RootCmd.AddCommand(switchCmd)
+
+	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 }
 
 func Execute() (err error) {

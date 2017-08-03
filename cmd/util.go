@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+
+	"github.com/codekoala/go-aws-lanes"
 )
 
 var (
@@ -12,8 +15,13 @@ var (
 
 type InputParseFunction func(string) error
 
-func Prompt(prompt string, parser InputParseFunction) (err error) {
+func Prompt(servers []*lanes.Server, prompt string, parser InputParseFunction) (err error) {
 	var input string
+
+	if err = lanes.DisplayServers(servers); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	for {
 		fmt.Printf("\n%s ", prompt)

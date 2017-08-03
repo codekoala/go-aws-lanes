@@ -45,12 +45,6 @@ func ChooseServer(servers []*lanes.Server) *lanes.Server {
 		idx int
 		err error
 	)
-
-	if err = lanes.DisplayServers(servers); err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
 	parse := func(input string) (err error) {
 		if idx, err = strconv.Atoi(input); err != nil {
 			return fmt.Errorf("Invalid input; please enter a number.")
@@ -63,7 +57,7 @@ func ChooseServer(servers []*lanes.Server) *lanes.Server {
 		return nil
 	}
 
-	if err = Prompt("Which server?", parse); err != nil {
+	if err = Prompt(servers, "Which server?", parse); err != nil {
 		fmt.Println("Canceled.")
 		os.Exit(1)
 	}

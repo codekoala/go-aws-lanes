@@ -12,7 +12,7 @@ import (
 var shCmd = &cobra.Command{
 	Use:   `sh LANE "COMMAND"`,
 	Short: "Executes a command on all machines in the specified lane",
-	Args:  cobra.MinimumNArgs(2),
+	Args:  cobra.ExactArgs(2),
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
@@ -22,18 +22,11 @@ var shCmd = &cobra.Command{
 			err     error
 		)
 
-		if len(args) > 1 {
-			lane = args[0]
-			shCmd = args[1]
-		}
+		lane = cmd.Flags().Arg(0)
+		shCmd = cmd.Flags().Arg(1)
 
 		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
 			fmt.Printf("failed to fetch servers: %s", err)
-			os.Exit(1)
-		}
-
-		if err = lanes.DisplayServers(servers); err != nil {
-			fmt.Println(err.Error())
 			os.Exit(1)
 		}
 
@@ -45,7 +38,13 @@ var shCmd = &cobra.Command{
 			return nil
 		}
 
-		if err = Prompt(fmt.Sprintf("Type CONFIRM to execute %q on these machines:", shCmd), parse); err != nil {
+		if confirmed, _ := cmd.Flags().GetBool("confirm"); confirmed {
+			err = lanes.DisplayServers(servers)
+		} else {
+			err = Prompt(servers, fmt.Sprintf("Type CONFIRM to execute %q on these machines:", shCmd), parse)
+		}
+
+		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
