@@ -33,6 +33,7 @@ func init() {
 	RootCmd.AddCommand(shCmd)
 	RootCmd.AddCommand(sshCmd)
 	RootCmd.AddCommand(switchCmd)
+	RootCmd.AddCommand(versionCmd)
 
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 	filePushCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")

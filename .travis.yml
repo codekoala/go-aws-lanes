@@ -10,13 +10,14 @@ install:
 
 script:
   - make test
-  - make build
+  - make all
 
 deploy:
   provider: releases
   api_key:
     secure: kgl9dHs7SeJeenkOPIoZboFvO4iIxKyzY4dUndmQxkeN6NvTIE8mfV4TyMxk0tFW6m1nsljEhmAgLaiHfLBXCkkkEWwASfeyWZ7yhoB6S+btKoyuB/gJ1wYPShVXT2ybO89Vw85rZ7htbLlVPt0ZkIfagGaR08YonPc0sC76nx3QiRwgd3WyYUEVe1Yc/iw0i8J962Bkg7Xq5XWcNvPhZyzfqAuDrbI1DWo/NFCZ8I18DNtcFyKrymKm/D6cc5dxtcla4qTTtYVstjHqeWUlUxKVHgQ1sJoI6oCgmG8qwEBD7txWM65afPseBeg/SX1S3BI98sBUiDV4SplYVNwdgb/EW/M7EHVRzHGOgtuXPuHw/1qpj8Vz1XnYccblV9aKb2igPWsM9TsnajnRuTn0Rx46pdr40NTnRTdI8M7mlfYgwhZ3P/8EgvrvozKAEMVhBUb5yLlsJvQSpDuWH51Ey+uhiI9bqKLLy/hqjImBeNHYImRgwTBBnt/ELCg4tl8qNClVE/f3tbf09jLLpfKXkjjtkX9BFslQfEqAxVk0tTBPscDxX2d2iASjyt4Ks3IE9JVHbb0w8QDHRpootmU9nKjDKy8zq5DpfDFOPEdk+9T8XB4wVhLIHREr6Lbryj+YClEashB+tBbr0rizqx9uR3UzuXz7wBCpJghLyc7Q9gM=
-  file: "./bin/lanes"
+  file_glob: true
+  file: ./bin/*
   skip_cleanup: true
   overwrite: true
   on:
