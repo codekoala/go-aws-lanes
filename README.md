@@ -59,6 +59,53 @@ A lane is basically a logical environment for your EC2 instances. For example,
 you could have a lane called "dev" for development servers, one called "uat"
 user acceptance testing, and one called "prod" for production servers.
 
+## Configuration
+
+The configuration for this tool lives in ``$HOME/.lanes/`` by default. Create a
+``$HOME/.lanes/lanes.yml`` file with the following content:
+
+```yaml
+profile: demo
+```
+
+Next, create a ``$HOME/.lanes/demo.yml`` file with contents such as the
+following:
+
+```yaml
+aws_access_key_id: [your AWS_ACCESS_KEY_ID for the "demo" profile]
+aws_secret_access_key: [your AWS_SECRET_ACCESS_KEY for the "demo" profile]
+ssh:
+  mods:
+    dev:
+      identity: ~/.ssh/id_rsa_demo_dev
+      tunnels:
+        - 8080:127.0.0.1:80
+        - 3306:127.0.0.1:3306
+    uat:
+      identity: ~/.ssh/id_rsa_demo_uat
+      tunnel: 8080:127.0.0.1:80
+    prod:
+      identity: ~/.ssh/id_rsa_demo_prod
+```
+
+### Environment Variables
+
+``lanes`` supports a handful of environment variables to quickly change
+behavior:
+
+* ``LANES_CONFIG_DIR``: the directory where all configuration is expected to
+  reside. Default: ``$HOME/.lanes/``
+* ``LANES_CONFIG``: the configuration file to use for lanes. Default:
+  ``$LANES_CONFIG_DIR/lanes.yml``
+* ``LANES_REGION``: the AWS region to use when listing EC2 instances. Default:
+  ``us-west-2``
+
+## Usage
+
+When executing ``lanes``, the desired profile is determined first by the
+``LANES_PROFILE`` environment variable. If this is not set, the profile
+configured in ``$HOME/.lanes/lanes.yml`` will be used.
+
 ## Credits
 
 This project is heavily based on https://github.com/Lemniscate/aws-lanes. The
