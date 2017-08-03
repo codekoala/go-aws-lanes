@@ -15,24 +15,24 @@ type Profile struct {
 	Tunnels  []string `yaml:"tunnels,omitempty"`
 }
 
-func (this *Profile) GetCommand(addr string) (cmd string) {
+func (this *Profile) SSHArgs(addr string) (args []string) {
 	if this.User == "" {
 		this.User = "ec2-user"
 	}
 
-	cmd = fmt.Sprintf("ssh %s@%s", this.User, addr)
+	args = append(args, fmt.Sprintf("%s@%s", this.User, addr))
 
 	if this.Identity != "" {
-		cmd += fmt.Sprintf(" -i %s", this.Identity)
+		args = append(args, "-i", this.Identity)
 	}
 
 	if this.Tunnel != "" {
-		cmd += fmt.Sprintf(" -L %s", this.Tunnel)
+		args = append(args, "-L", this.Tunnel)
 	}
 
 	for _, t := range this.Tunnels {
-		cmd += fmt.Sprintf(" -L %s", t)
+		args = append(args, "-L", t)
 	}
 
-	return cmd
+	return args
 }

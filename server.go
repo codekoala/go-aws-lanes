@@ -2,6 +2,8 @@ package lanes
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"sort"
 	"strings"
 	"time"
@@ -10,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/briandowns/spinner"
+
+	"github.com/codekoala/go-aws-lanes/ssh"
 )
 
 type Server struct {
@@ -17,6 +21,15 @@ type Server struct {
 	Name string
 	Lane string
 	IP   string
+}
+
+func (this *Server) Login(profile *ssh.Profile) error {
+	cmd := exec.Command("ssh", profile.SSHArgs(this.IP)...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
 }
 
 func (this *Server) SortKey() string {
@@ -27,7 +40,11 @@ func (this *Server) String() string {
 	return fmt.Sprintf("%s (%s)", this.Name, this.ID)
 }
 
-func DisplayServers(servers []*Server) {
+func DisplayServers(servers []*Server) (err error) {
+	if len(servers) == 0 {
+		return fmt.Errorf("No servers found.")
+	}
+
 	termtables.EnableUTF8()
 	table := termtables.CreateTable()
 	table.AddTitle("AWS Servers")
@@ -38,6 +55,8 @@ func DisplayServers(servers []*Server) {
 	}
 
 	fmt.Printf(table.Render())
+
+	return nil
 }
 
 func FetchServers(svc *ec2.EC2) ([]*Server, error) {

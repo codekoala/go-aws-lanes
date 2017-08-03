@@ -1,5 +1,5 @@
 build: bin
-	go build -o ./bin/lanes ./cmd/lanes
+	go build -ldflags '-s' -o ./bin/lanes ./cmd/lanes
 
 clean:
 	rm -rf ./bin/
