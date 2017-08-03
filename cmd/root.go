@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
@@ -42,20 +39,5 @@ func init() {
 }
 
 func Execute() (err error) {
-	fmt.Printf("Current profile: %s\n", Config.Profile)
-	if profile, err = Config.GetCurrentProfile(); err != nil {
-		fmt.Println(err.Error())
-	} else {
-		profile.Activate()
-
-		// Create a session to share configuration, and load external configuration.
-		sess = session.Must(session.NewSession(&aws.Config{
-			Region: aws.String(profile.Region),
-		}))
-
-		// Create the service's client with the session.
-		svc = ec2.New(sess)
-	}
-
 	return RootCmd.Execute()
 }

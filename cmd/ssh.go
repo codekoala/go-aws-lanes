@@ -15,6 +15,8 @@ var sshCmd = &cobra.Command{
 	Short: "List all server names, IP, Instance ID (optionally filtered by lane), prompting for one to SSH into",
 	Args:  cobra.MaximumNArgs(1),
 
+	PersistentPreRunE: RequireProfile,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			lane string
@@ -44,10 +46,6 @@ func ConnectToServer(svr *lanes.Server, args ...string) (err error) {
 		sshProfile *ssh.Profile
 		exists     bool
 	)
-
-	if profile == nil {
-		return fmt.Errorf("invalid profile selected")
-	}
 
 	fmt.Printf("Connecting to server %s...\n", svr)
 	if sshProfile, exists = profile.SSH.Mods[svr.Lane]; !exists {

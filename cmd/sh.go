@@ -14,6 +14,8 @@ var shCmd = &cobra.Command{
 	Short: "Executes a command on all machines in the specified lane",
 	Args:  cobra.ExactArgs(2),
 
+	PersistentPreRunE: RequireProfile,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			servers []*lanes.Server

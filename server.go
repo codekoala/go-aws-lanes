@@ -36,7 +36,7 @@ func (this *Server) Login(profile *ssh.Profile, args []string) error {
 }
 
 func (this *Server) Push(profile *ssh.Profile, dest string, sources ...string) error {
-	scpArgs := []string{"-i", profile.Identity}
+	scpArgs := []string{"-i", profile.Identity, "-r"}
 	scpArgs = append(scpArgs, sources...)
 	scpArgs = append(scpArgs, fmt.Sprintf("%s:%s", profile.UserAt(this.IP), dest))
 

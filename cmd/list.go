@@ -14,6 +14,8 @@ var listCmd = &cobra.Command{
 	Args:    cobra.MaximumNArgs(1),
 	Aliases: []string{"ls"},
 
+	PersistentPreRunE: RequireProfile,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
 			lane    string

@@ -17,8 +17,10 @@ var filePushCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			servers []*lanes.Server
-			err     error
+			servers    []*lanes.Server
+			sshProfile *ssh.Profile
+			exists     bool
+			err        error
 		)
 
 		fl := cmd.Flags()
@@ -41,13 +43,19 @@ var filePushCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err = CopyToServers(servers, dest, sources...); err != nil {
+		if sshProfile, exists = profile.SSH.Mods[lane]; !exists {
+			fmt.Printf("No SSH profile for lane %q\n", lane)
+			os.Exit(1)
+		}
+
+		if err = CopyToServers(sshProfile, servers, dest, sources...); err != nil {
 			fmt.Printf("copy error: %s\n", err)
 			os.Exit(1)
 		}
 	},
 }
 
+// CheckSourceFiles ensures that each provided path points to an accessible file.
 func CheckSourceFiles(sources ...string) (err error) {
 	for _, src := range sources {
 		if _, err = os.Stat(src); err != nil {
@@ -58,21 +66,8 @@ func CheckSourceFiles(sources ...string) (err error) {
 	return nil
 }
 
-func CopyToServers(servers []*lanes.Server, dest string, sources ...string) (err error) {
-	var (
-		sshProfile *ssh.Profile
-		exists     bool
-	)
-
-	if profile == nil {
-		return fmt.Errorf("invalid profile selected")
-	}
-
-	lane := servers[0].Lane
-	if sshProfile, exists = profile.SSH.Mods[lane]; !exists {
-		return fmt.Errorf("No SSH profile for lane %q\n", lane)
-	}
-
+// CopyToServers uses the provided SSH profile to copy one or more files to all provided servers.
+func CopyToServers(sshProfile *ssh.Profile, servers []*lanes.Server, dest string, sources ...string) (err error) {
 	for _, svr := range servers {
 		fmt.Printf("\n=====\n\nCopying to server %s...\n", svr)
 

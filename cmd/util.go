@@ -6,6 +6,11 @@ import (
 	"io"
 	"strconv"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/spf13/cobra"
+
 	"github.com/codekoala/go-aws-lanes"
 )
 
@@ -14,6 +19,25 @@ var (
 )
 
 type InputParseFunction func(string) error
+
+func RequireProfile(cmd *cobra.Command, args []string) (err error) {
+	fmt.Printf("Current profile: %s\n", Config.Profile)
+	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
+		return fmt.Errorf("invalid profile selected")
+	}
+
+	profile.Activate()
+
+	// Create a session to share configuration, and load external configuration.
+	sess = session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(profile.Region),
+	}))
+
+	// Create the service's client with the session.
+	svc = ec2.New(sess)
+
+	return nil
+}
 
 func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.Server, err error) {
 	if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
