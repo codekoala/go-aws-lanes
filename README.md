@@ -11,8 +11,8 @@ multiple sets of AWS credentials and perform the following operations:
 * quickly SSH into a specific EC2 instance using the correct credentials,
   optionally setting up tunnels to locally access services running on a given
   instance.
-* copy files to/from one or more EC2 instances (TODO)
-* run commands on one or more EC2 instances
+* copy files to all EC2 instances in a given lane
+* run commands on all EC2 instances in a given lane
 
 ## Sample Output
 
