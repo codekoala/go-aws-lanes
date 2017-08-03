@@ -16,35 +16,16 @@ var shCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			lane    string
-			shCmd   string
 			servers []*lanes.Server
 			err     error
 		)
 
-		lane = cmd.Flags().Arg(0)
-		shCmd = cmd.Flags().Arg(1)
+		lane := cmd.Flags().Arg(0)
+		shCmd := cmd.Flags().Arg(1)
+		prompt := fmt.Sprintf("Type CONFIRM to execute %q on these machines:", shCmd)
+		confirmed, _ := cmd.Flags().GetBool("confirm")
 
-		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
-			fmt.Printf("failed to fetch servers: %s", err)
-			os.Exit(1)
-		}
-
-		parse := func(input string) (err error) {
-			if input != "CONFIRM" {
-				return ErrCanceled
-			}
-
-			return nil
-		}
-
-		if confirmed, _ := cmd.Flags().GetBool("confirm"); confirmed {
-			err = lanes.DisplayServers(servers)
-		} else {
-			err = Prompt(servers, fmt.Sprintf("Type CONFIRM to execute %q on these machines:", shCmd), parse)
-		}
-
-		if err != nil {
+		if servers, err = DisplayLaneAndConfirm(lane, prompt, confirmed); err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}

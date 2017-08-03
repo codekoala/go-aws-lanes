@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
+	"strconv"
 
 	"github.com/codekoala/go-aws-lanes"
 )
@@ -15,13 +15,43 @@ var (
 
 type InputParseFunction func(string) error
 
-func Prompt(servers []*lanes.Server, prompt string, parser InputParseFunction) (err error) {
-	var input string
+func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.Server, err error) {
+	if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
+		err = fmt.Errorf("failed to fetch servers: %s", err)
+		return
+	}
+
+	if err = DisplayAndConfirm(servers, prompt, confirm); err != nil {
+		return
+	}
+
+	return servers, nil
+}
+
+func DisplayAndConfirm(servers []*lanes.Server, prompt string, confirm bool) (err error) {
+	parse := func(input string) (err error) {
+		if input != "CONFIRM" {
+			return ErrCanceled
+		}
+
+		return nil
+	}
 
 	if err = lanes.DisplayServers(servers); err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return
 	}
+
+	if !confirm {
+		if err = Prompt(prompt, parse); err != nil {
+			return
+		}
+	}
+
+	return nil
+}
+
+func Prompt(prompt string, parser InputParseFunction) (err error) {
+	var input string
 
 	for {
 		fmt.Printf("\n%s ", prompt)
@@ -54,4 +84,39 @@ func Prompt(servers []*lanes.Server, prompt string, parser InputParseFunction) (
 
 Cancel:
 	return ErrCanceled
+}
+
+func ChooseServer(lane string) (svr *lanes.Server, err error) {
+	var (
+		servers []*lanes.Server
+		idx     int
+	)
+
+	if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
+		err = fmt.Errorf("failed to fetch servers: %s", err)
+		return
+	}
+
+	if err = lanes.DisplayServers(servers); err != nil {
+		err = fmt.Errorf("failed to display servers: %s\n", err)
+		return
+	}
+
+	parse := func(input string) (err error) {
+		if idx, err = strconv.Atoi(input); err != nil {
+			return fmt.Errorf("Invalid input; please enter a number.")
+		}
+
+		if idx < 1 || idx > len(servers) {
+			return fmt.Errorf("Invalid input; please enter a valid server number.")
+		}
+
+		return nil
+	}
+
+	if err = Prompt("Which server?", parse); err != nil {
+		return svr, ErrCanceled
+	}
+
+	return servers[idx-1], nil
 }

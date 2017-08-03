@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -18,51 +17,25 @@ var sshCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			lane    string
-			servers []*lanes.Server
-			err     error
+			lane string
+			svr  *lanes.Server
+			err  error
 		)
 
 		if len(args) > 0 {
 			lane = args[0]
 		}
 
-		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
-			cmd.Printf("failed to fetch servers: %s", err)
+		if svr, err = ChooseServer(lane); err != nil {
+			cmd.Printf(err.Error())
 			os.Exit(1)
 		}
 
-		svr := ChooseServer(servers)
 		if err = ConnectToServer(svr); err != nil {
 			cmd.Printf("SSH error: %s\n", err)
 			os.Exit(1)
 		}
 	},
-}
-
-func ChooseServer(servers []*lanes.Server) *lanes.Server {
-	var (
-		idx int
-		err error
-	)
-	parse := func(input string) (err error) {
-		if idx, err = strconv.Atoi(input); err != nil {
-			return fmt.Errorf("Invalid input; please enter a number.")
-		}
-
-		if idx < 1 || idx > len(servers) {
-			return fmt.Errorf("Invalid input; please enter a valid server number.")
-		}
-
-		return nil
-	}
-
-	if err = Prompt(servers, "Which server?", parse); err != nil {
-		fmt.Println("Canceled.")
-		os.Exit(1)
-	}
-
-	return servers[idx-1]
 }
 
 // ConnectToServer uses the specified server's lane to correctly connect to the desired server.

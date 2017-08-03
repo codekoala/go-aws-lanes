@@ -35,6 +35,21 @@ func (this *Server) Login(profile *ssh.Profile, args []string) error {
 	return cmd.Run()
 }
 
+func (this *Server) Push(profile *ssh.Profile, dest string, sources ...string) error {
+	scpArgs := []string{"-i", profile.Identity}
+	scpArgs = append(scpArgs, sources...)
+	scpArgs = append(scpArgs, fmt.Sprintf("%s:%s", profile.UserAt(this.IP), dest))
+
+	//fmt.Printf("scp %s\n", strings.Join(scpArgs, " "))
+
+	cmd := exec.Command("scp", scpArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
+}
+
 func (this *Server) SortKey() string {
 	return fmt.Sprintf("%s %s %s", this.Lane, this.Name, this.ID)
 }

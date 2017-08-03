@@ -14,8 +14,7 @@ import (
 var (
 	RootCmd = &cobra.Command{
 		Use:   "lanes",
-		Short: "",
-		Long:  "",
+		Short: "Helper for interacting with sets of AWS EC2 instances",
 
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Usage()
@@ -39,6 +38,7 @@ func init() {
 	RootCmd.AddCommand(switchCmd)
 
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
+	filePushCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 }
 
 func Execute() (err error) {
