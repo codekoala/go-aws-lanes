@@ -77,6 +77,11 @@ func (this *Config) WriteFile(dest string) (err error) {
 		return
 	}
 
+	// make sure the destination directory exists
+	if err = os.MkdirAll(path.Dir(dest), 0700); err != nil {
+		return
+	}
+
 	return ioutil.WriteFile(dest, out, 0644)
 }
 
