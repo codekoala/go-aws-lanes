@@ -17,14 +17,24 @@ build: bin
 checksums:
 	cd ./bin/; sha256sum lanes* > SHA256SUMS
 
-compress:
-	@upx ./bin/lanes
+compress: get-upx
+	@$(UPX) ./bin/lanes*
 
 test:
 	go test -race -cover `go list ./... | grep -v vendor`
 
 clean:
-	rm -rf ./bin/
+	rm -rf ./bin/ ./upx/
 
 bin:
 	mkdir -p ./bin/
+
+UPX := $(shell which upx)
+upx_version := 3.94
+get-upx:
+ifeq ($(UPX),)
+	@mkdir -p ./upx/
+	@curl -Ls https://github.com/upx/upx/releases/download/v$(upx_version)/upx-$(upx_version)-amd64_linux.tar.xz | tar Jx -C ./upx/ --strip-components 1
+	$(eval UPX := ./upx/upx)
+endif
+	@$(UPX) --version
