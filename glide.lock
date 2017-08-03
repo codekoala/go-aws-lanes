@@ -1,5 +1,5 @@
-hash: a7fc2079e9b7b9ff6cdbba9d74d66a786bbc0388d0bc3a43e917011fd46d1147
-updated: 2017-08-03T01:56:44.385749032-04:00
+hash: 6d7341c9226a6a441ee6e5a42219d3b652a8e1833257cb9f0980de615de64cce
+updated: 2017-08-03T10:58:45.192733199-04:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
@@ -58,6 +58,8 @@ imports:
   - cobra
 - name: github.com/spf13/pflag
   version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
 - name: golang.org/x/sys
   version: e24f485414aeafb646f6fca458b0bf869c0880a1
   repo: https://go.googlesource.com/sys

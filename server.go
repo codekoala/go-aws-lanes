@@ -86,7 +86,7 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 
 	fmt.Printf("Fetching servers... ")
 	defer fmt.Println("done")
-	spin := spinner.New(spinner.CharSets[21], 100*time.Millisecond)
+	spin := spinner.New(spinner.CharSets[21], 50*time.Millisecond)
 	spin.Start()
 	defer spin.Stop()
 
