@@ -1,6 +1,16 @@
-hash: 97c3e43e1e7d326b75c25f67bd9f235242aa175121f7d7c188e338a51c673ca9
-updated: 2017-08-02T15:46:53.934993122-04:00
+hash: 50836688957d2f61c469470adc7b311b5d5eb121e955f4d8d3ffddd69870f2c6
+updated: 2017-08-02T23:29:50.952228241-04:00
 imports:
+- name: github.com/aws/aws-sdk-go
+  version: b33b08175d12b795daa7726c5577b39d06a2551c
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/spf13/cobra
+  version: b26b538f693051ac6518e65672de3144ce3fbedc
+  subpackages:
+  - cobra
+- name: github.com/spf13/pflag
+  version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 - name: gopkg.in/yaml.v2
   version: 25c4ec802a7d637f88d584ab26798e94ad14c13b
 testImports: []

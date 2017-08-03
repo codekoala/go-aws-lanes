@@ -1,5 +1,8 @@
-build:
-	go build -o lanes ./cmd/lanes
+build: bin
+	go build -o ./bin/lanes ./cmd/lanes
 
 clean:
-	rm -f lanes
+	rm -rf ./bin/
+
+bin:
+	mkdir -p ./bin/

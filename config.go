@@ -15,6 +15,9 @@ var (
 
 	// CONFIG is the path to the Lanes configuration file to use.
 	CONFIG = EnvDefault("LANES_CONFIG", "$LANES_CONFIG_DIR/lanes.yml")
+
+	// REGION is the default region to use for any profile that doesn't have a region explicitly set.
+	REGION = EnvDefault("LANES_REGION", "us-west-2")
 )
 
 type Config struct {
@@ -87,8 +90,7 @@ func (this *Config) GetProfilePath() string {
 	return path.Join(CONFIG_DIR, this.Profile+".yml")
 }
 
-// SetProfile changes the desired profile and immediately saves the changes to disk.
-func (this *Config) SetProfile(name string) error {
+// SetProfile changes the desired profile.
+func (this *Config) SetProfile(name string) {
 	this.Profile = name
-	return this.Write()
 }
