@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"sort"
-	"strings"
 	"time"
 
 	"github.com/apcera/termtables"
@@ -92,7 +91,7 @@ func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
 		input = &ec2.DescribeInstancesInput{
 			Filters: []*ec2.Filter{{
 				Name:   aws.String("tag-key"),
-				Values: []*string{aws.String("Lane")},
+				Values: []*string{aws.String(LANE_TAG)},
 			}, {
 				Name:   aws.String("tag-value"),
 				Values: []*string{aws.String(lane)},
@@ -132,10 +131,10 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 					continue
 				}
 
-				switch strings.ToLower(*tag.Key) {
-				case "name":
+				switch *tag.Key {
+				case NAME_TAG:
 					svr.Name = *tag.Value
-				case "lane":
+				case LANE_TAG:
 					svr.Lane = *tag.Value
 				}
 			}

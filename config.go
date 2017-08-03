@@ -18,6 +18,12 @@ var (
 
 	// REGION is the default region to use for any profile that doesn't have a region explicitly set.
 	REGION = EnvDefault("LANES_REGION", "us-west-2")
+
+	// LANE_TAG is the name of the EC2 tag to use when determining which lane a server belongs in.
+	LANE_TAG = EnvDefault("LANES_LANE_TAG", "Lane")
+
+	// NAME_TAG is the name of the EC2 tag to use when determining a server's name.
+	NAME_TAG = EnvDefault("LANES_NAME_TAG", "Name")
 )
 
 type Config struct {

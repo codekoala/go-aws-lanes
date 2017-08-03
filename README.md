@@ -102,6 +102,10 @@ behavior:
   ``$LANES_CONFIG_DIR/lanes.yml``
 * ``LANES_REGION``: the AWS region to use when listing EC2 instances. Default:
   ``us-west-2``
+* ``LANES_LANE_TAG``: the EC2 instance tag to use for determining which lane an
+  instance belongs to. Default: ``Lane``
+* ``LANES_NAME_TAG``: the EC2 instance tag to use for determining an instance's
+  name. Default: ``Name``
 
 ## Usage
 
