@@ -2,6 +2,7 @@ package lanes
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"sort"
@@ -40,7 +41,11 @@ func (this *Server) String() string {
 	return fmt.Sprintf("%s (%s)", this.Name, this.ID)
 }
 
-func DisplayServers(servers []*Server) (err error) {
+func DisplayServers(servers []*Server) error {
+	return DisplayServersWriter(os.Stdout, servers)
+}
+
+func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 	if len(servers) == 0 {
 		return fmt.Errorf("No servers found.")
 	}
@@ -54,7 +59,7 @@ func DisplayServers(servers []*Server) (err error) {
 		table.AddRow(idx+1, svr.Lane, svr.Name, svr.IP, svr.ID)
 	}
 
-	fmt.Printf(table.Render())
+	fmt.Fprintf(writer, table.Render())
 
 	return nil
 }
