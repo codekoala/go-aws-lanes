@@ -10,7 +10,7 @@ install:
 
 script:
   - make test
-  - make all
+  - TAG=$TRAVIS_COMMIT make all
 
 deploy:
   provider: releases
