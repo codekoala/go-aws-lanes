@@ -34,7 +34,7 @@ func LoadConfigFile(cfgPath string) (c *Config, err error) {
 	var in []byte
 
 	if in, err = ioutil.ReadFile(cfgPath); err != nil {
-		err = fmt.Errorf("unable to read configuration file: %s", cfgPath, err)
+		err = fmt.Errorf("unable to read configuration file: %s", err)
 		return
 	}
 
