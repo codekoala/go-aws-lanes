@@ -7,7 +7,7 @@ multiple sets of AWS credentials and perform the following operations:
 * list EC2 instances on the account, optionally filtered by a "Lane" tag.
 * quickly SSH into a specific EC2 instance using the correct credentials,
   optionally setting up tunnels to locally access services running on a given
-  instancce.
+  instance.
 * copy files to/from one or more EC2 instances (TODO)
 * run commands on one or more EC2 instances (TODO)
 
