@@ -13,8 +13,7 @@ var switchCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		profile := args[0]
-		Config.SetProfile(profile)
-		if err := Config.Write(); err != nil {
+		if err := Config.SetProfile(profile); err != nil {
 			log.Printf("Failed to switch profile: %s", err)
 		} else {
 			log.Printf("Switched to profile %q", profile)

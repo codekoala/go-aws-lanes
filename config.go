@@ -91,6 +91,7 @@ func (this *Config) GetProfilePath() string {
 }
 
 // SetProfile changes the desired profile.
-func (this *Config) SetProfile(name string) {
+func (this *Config) SetProfile(name string) error {
 	this.Profile = name
+	return this.Write()
 }

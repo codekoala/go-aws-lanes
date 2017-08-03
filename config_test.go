@@ -2,6 +2,7 @@ package lanes_test
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,4 +26,17 @@ func TestLoadConfigBytes(t *testing.T) {
 	out, err = lanes.LoadConfigBytes(in)
 	assert.Nil(t, err)
 	assert.Equal(t, out.Profile, "test")
+}
+
+func TestConfigWriteBytes(t *testing.T) {
+	c := &lanes.Config{Profile: "demo"}
+
+	out, err := c.WriteBytes()
+	assert.Nil(t, err)
+	assert.Equal(t, out, []byte("profile: demo\n"))
+}
+
+func TestConfigGetProfilePath(t *testing.T) {
+	c := &lanes.Config{Profile: "demo"}
+	assert.True(t, strings.HasSuffix(c.GetProfilePath(), "/demo.yml"))
 }
