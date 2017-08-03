@@ -2,7 +2,7 @@ REPO ?= github.com/codekoala/go-aws-lanes
 TAG ?= $(shell git rev-parse HEAD)-dev
 BUILD_DATE := $(shell date +%FT%T%z)
 
-all: linux osx checksums
+all: linux osx compress checksums
 
 linux:
 	GOOS=linux GOARCH=amd64 $(MAKE) build
