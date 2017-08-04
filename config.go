@@ -142,3 +142,8 @@ func (this *Config) SetProfile(name string) error {
 	this.Profile = name
 	return this.Write()
 }
+
+// GetCurrentProfile loads the currently configured lane profile from the filesystem.
+func (this *Config) GetCurrentProfile() (prof *Profile, err error) {
+	return LoadProfile(this.Profile)
+}

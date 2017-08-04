@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"gopkg.in/yaml.v2"
@@ -19,6 +20,43 @@ type Profile struct {
 	SSH ssh.Config `yaml:"ssh"`
 
 	global *Config
+}
+
+// GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
+// the named profile.
+func GetProfilePath(name string) string {
+	return path.Join(CONFIG_DIR, name+".yml")
+}
+
+// LoadProfile attempts to read the specified profile from the filesystem.
+func LoadProfile(name string) (prof *Profile, err error) {
+	var in []byte
+
+	if in, err = ioutil.ReadFile(GetProfilePath(name)); err != nil {
+		err = fmt.Errorf("unable to read profile: %s", err)
+		return
+	}
+
+	return LoadProfileBytes(in)
+}
+
+// LoadProfileBytes loads the currently configured lane profile from the specified YAML bytes.
+func LoadProfileBytes(in []byte) (prof *Profile, err error) {
+	prof = new(Profile)
+	if err = yaml.Unmarshal(in, prof); err != nil {
+		err = fmt.Errorf("unable to parse lane profile: %s", err)
+		return
+	}
+
+	// allow the profile to access global configuration values
+	prof.global = config
+
+	if err = prof.Validate(); err != nil {
+		err = fmt.Errorf("invalid profile: %s", err)
+		return
+	}
+
+	return prof, nil
 }
 
 // Validate checks that the profile includes the necessary information to interact with AWS.
@@ -82,30 +120,34 @@ func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesIn
 	return servers, nil
 }
 
-// GetCurrentProfile loads the currently configured lane profile from the filesystem.
-func (this *Config) GetCurrentProfile() (prof *Profile, err error) {
-	var in []byte
+// Write saves the current settings to disk using the specified profile name.
+func (this *Profile) Write(name string) (err error) {
+	return this.WriteFile(name, GetProfilePath(name))
+}
 
-	ppath := this.GetProfilePath()
+// WriteFile saves the current profile settings to the specified file.
+func (this *Profile) WriteFile(name, dest string) (err error) {
+	var out []byte
 
-	if in, err = ioutil.ReadFile(ppath); err != nil {
-		err = fmt.Errorf("unable to read lane profile: %s", err)
+	if out, err = this.WriteBytes(); err != nil {
 		return
 	}
 
-	prof = new(Profile)
-	if err = yaml.Unmarshal(in, prof); err != nil {
-		err = fmt.Errorf("unable to parse lane profile (%s): %s", ppath, err)
+	// make sure the destination directory exists
+	if err = os.MkdirAll(path.Dir(dest), 0700); err != nil {
 		return
 	}
 
-	// allow the profile to access global configuration values
-	prof.global = this
-
-	if err = prof.Validate(); err != nil {
-		err = fmt.Errorf("invalid profile: %s", err)
+	if err = ioutil.WriteFile(dest, out, 0600); err != nil {
 		return
 	}
 
-	return prof, nil
+	fmt.Printf("Profile %q written to %s\n", name, dest)
+
+	return nil
+}
+
+// WriteBytes marshals the current settings to YAML.
+func (this *Profile) WriteBytes() ([]byte, error) {
+	return yaml.Marshal(this)
 }
