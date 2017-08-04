@@ -2,6 +2,7 @@
 [![Travis CI Status](https://travis-ci.org/codekoala/go-aws-lanes.svg?branch=master)](https://travis-ci.org/codekoala/go-aws-lanes)
 [![License BSD3](https://img.shields.io/badge/license-BSD3-blue.svg)](https://raw.githubusercontent.com/codekoala/go-aws-lanes/master/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/codekoala/go-aws-lanes/total.svg)](https://github.com/codekoala/go-aws-lanes/releases)
+[![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/codekoala/go-aws-lanes)
 
 This command line tool is designed to help people interact with different sets
 of AWS profiles and EC2 instances. It allows you to easily switch between
@@ -58,6 +59,21 @@ multiple sets of AWS credentials and perform the following operations:
 A lane is basically a logical environment for your EC2 instances. For example,
 you could have a lane called "dev" for development servers, one called "uat"
 user acceptance testing, and one called "prod" for production servers.
+
+## Installation
+
+1. Download a pre-compiled, released version from [the releases
+   page](https://github.com/codekoala/go-aws-lanes/releases)
+2. Mark the binary as executable
+3. Move the binary to your ``$PATH``
+
+For example:
+
+    curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.1.1/lanes_linux_amd64
+    chmod +x /tmp/lanes
+    sudo mv /tmp/lanes /usr/local/bin/lanes
+
+To compile from source, please see the instructions in the [contributing section](#contributing).
 
 ## Configuration
 
@@ -189,6 +205,43 @@ $ lanes file push dev localfile.txt magic.log /tmp/
 # /tmp/ on all instances without confirmation
 $ lanes file push dev --confirm localfile.txt magic.log /tmp/
 ```
+
+## Contributing
+
+To build and install lanes locally, you will need to have [Go
+1.8](https://golang.org/dl/) or newer, as well as [Glide](http://glide.sh) to
+manage the build dependencies.
+
+Clone the repository:
+
+```shell
+$ git clone https://github.com/codekoala/go-aws-lanes.git
+```
+
+Install dependencies:
+
+```shell
+$ glide install
+```
+
+Build the binary:
+
+```shell
+# for Linux systems
+$ make linux
+
+# for OSX systems
+$ make osx
+```
+
+If you just want to run the tests:
+
+```shell
+$ make test
+```
+
+If you wish to contribute changes to the project, please fork the repository,
+make the changes in your fork, and submit a pull request.
 
 ## Credits
 
