@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/codekoala/go-aws-lanes"
-	"github.com/codekoala/go-aws-lanes/ssh"
 )
 
 var filePushCmd = &cobra.Command{
@@ -17,10 +16,8 @@ var filePushCmd = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var (
-			servers    []*lanes.Server
-			sshProfile *ssh.Profile
-			exists     bool
-			err        error
+			servers []*lanes.Server
+			err     error
 		)
 
 		fl := cmd.Flags()
@@ -43,12 +40,7 @@ var filePushCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if sshProfile, exists = profile.SSH.Mods[lane]; !exists {
-			fmt.Printf("No SSH profile for lane %q\n", lane)
-			os.Exit(1)
-		}
-
-		if err = CopyToServers(sshProfile, servers, dest, sources...); err != nil {
+		if err = CopyToServers(servers, dest, sources...); err != nil {
 			fmt.Printf("copy error: %s\n", err)
 			os.Exit(1)
 		}
@@ -67,11 +59,11 @@ func CheckSourceFiles(sources ...string) (err error) {
 }
 
 // CopyToServers uses the provided SSH profile to copy one or more files to all provided servers.
-func CopyToServers(sshProfile *ssh.Profile, servers []*lanes.Server, dest string, sources ...string) (err error) {
+func CopyToServers(servers []*lanes.Server, dest string, sources ...string) (err error) {
 	for _, svr := range servers {
 		fmt.Printf("\n=====\n\nCopying to server %s...\n", svr)
 
-		if err = svr.Push(sshProfile, dest, sources...); err != nil {
+		if err = svr.Push(dest, sources...); err != nil {
 			fmt.Printf("connection error: %s\n", err)
 			continue
 		}

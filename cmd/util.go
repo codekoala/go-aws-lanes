@@ -42,7 +42,7 @@ func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 }
 
 func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.Server, err error) {
-	if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
+	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
 		err = fmt.Errorf("failed to fetch servers: %s", err)
 		return
 	}
@@ -118,7 +118,7 @@ func ChooseServer(lane string) (svr *lanes.Server, err error) {
 		idx     int
 	)
 
-	if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
+	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
 		err = fmt.Errorf("failed to fetch servers: %s", err)
 		return
 	}

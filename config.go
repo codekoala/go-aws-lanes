@@ -97,8 +97,6 @@ func LoadConfigBytes(in []byte) (c *Config, err error) {
 	// set a global config variable for later use
 	config = c
 
-	fmt.Printf("%#v\n", c)
-
 	return c, nil
 }
 

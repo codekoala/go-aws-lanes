@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/codekoala/go-aws-lanes"
-	"github.com/codekoala/go-aws-lanes/ssh"
 )
 
 var sshCmd = &cobra.Command{
@@ -34,7 +33,7 @@ var sshCmd = &cobra.Command{
 		}
 
 		if err = ConnectToServer(svr); err != nil {
-			cmd.Printf("SSH error: %s\n", err)
+			cmd.Println(err.Error())
 			os.Exit(1)
 		}
 	},
@@ -42,18 +41,9 @@ var sshCmd = &cobra.Command{
 
 // ConnectToServer uses the specified server's lane to correctly connect to the desired server.
 func ConnectToServer(svr *lanes.Server, args ...string) (err error) {
-	var (
-		sshProfile *ssh.Profile
-		exists     bool
-	)
-
 	fmt.Printf("Connecting to server %s...\n", svr)
-	if sshProfile, exists = profile.SSH.Mods[svr.Lane]; !exists {
-		return fmt.Errorf("No SSH profile for lane %q\n", svr.Lane)
-	}
-
-	if err = svr.Login(sshProfile, args); err != nil {
-		return fmt.Errorf("connection error: %s\n", err)
+	if err = svr.Login(args); err != nil {
+		return fmt.Errorf("connection error: %s", err)
 	}
 
 	return nil

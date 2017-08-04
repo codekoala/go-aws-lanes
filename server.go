@@ -26,7 +26,17 @@ type Server struct {
 	profile *ssh.Profile
 }
 
-func (this *Server) Login(profile *ssh.Profile, args []string) error {
+// Login attempts to SSH into the server using the default profile.
+func (this *Server) Login(args []string) error {
+	if this.profile == nil {
+		return ErrMissingSSHProfile
+	}
+
+	return this.LoginWithProfile(this.profile, args)
+}
+
+// LoginWithProfile attempts to SSH into the server using a custom profile.
+func (this *Server) LoginWithProfile(profile *ssh.Profile, args []string) error {
 	sshArgs := append(profile.SSHArgs(this.IP), args...)
 
 	cmd := exec.Command("ssh", sshArgs...)
@@ -37,7 +47,17 @@ func (this *Server) Login(profile *ssh.Profile, args []string) error {
 	return cmd.Run()
 }
 
-func (this *Server) Push(profile *ssh.Profile, dest string, sources ...string) error {
+// Push attempts to copy files to the server using the default profile.
+func (this *Server) Push(dest string, sources ...string) error {
+	if this.profile == nil {
+		return ErrMissingSSHProfile
+	}
+
+	return this.PushWithProfile(this.profile, dest, sources...)
+}
+
+// PushWithProfile attempts to copy files to the server using a custom profile.
+func (this *Server) PushWithProfile(profile *ssh.Profile, dest string, sources ...string) error {
 	scpArgs := []string{"-i", profile.Identity, "-r"}
 	scpArgs = append(scpArgs, sources...)
 	scpArgs = append(scpArgs, fmt.Sprintf("%s:%s", profile.UserAt(this.IP), dest))
