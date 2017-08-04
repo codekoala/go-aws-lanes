@@ -1,6 +1,7 @@
 # go-aws-lanes
 [![Travis CI Status](https://travis-ci.org/codekoala/go-aws-lanes.svg?branch=master)](https://travis-ci.org/codekoala/go-aws-lanes)
-[![License BSD3](https://img.shields.io/badge/license-BSD3-blue.svg)](https://raw.githubusercontent.com/codekoala/go-aws-lanes/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://raw.githubusercontent.com/codekoala/go-aws-lanes/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/codekoala/go-aws-lanes.svg)](https://github.com/codekoala/go-aws-lanes/releases)
 [![Downloads](https://img.shields.io/github/downloads/codekoala/go-aws-lanes/total.svg)](https://github.com/codekoala/go-aws-lanes/releases)
 [![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg)](https://godoc.org/github.com/codekoala/go-aws-lanes)
 
