@@ -129,7 +129,46 @@ behavior:
 
 ## Usage
 
-### Selecting Profiles
+### Initializing New Systems
+
+The first time you use ``lanes``, you will need to create the initial
+configuration files. For this, you can use the ``lanes init`` command.
+
+```bash
+# initialize a lanes and create a sample lanes profile
+$ lanes init
+
+# initialize a lanes and but do not create a sample lanes profile
+$ lanes init --no-profile
+
+# initialize a lanes, overwriting any existing lanes configuration (the
+# "default" lanes profile will NOT be overwritten if it exists)
+$ lanes init --force
+```
+
+Alternatively, you may copy the ``$HOME/.lanes/`` directory from another system
+where you have previously configured ``lanes``.
+
+### Creating New Lane Profiles
+
+``lanes`` includes a helper to create fresh lane profiles:
+
+```bash
+# create a new profile, prompting for the profile name and AWS credentials
+$ lanes init profile
+
+# create a new profile named "foo", prompting only for the AWS credentials
+$ lanes init profile foo
+
+# create a new profile named "foo" with "ABCD" as the AWS Access Key ID,
+# prompting only for the AWS Secret Access Key
+$ lanes init profile foo ABCD
+```
+
+Profiles created with this command will include examples for how to configure
+individual lanes.
+
+### Selecting Lane Profiles
 
 When executing ``lanes``, the desired profile is determined first by the
 ``LANES_PROFILE`` environment variable. If this is not set, the profile
@@ -212,7 +251,7 @@ $ lanes file push dev --confirm localfile.txt magic.log /tmp/
 
 ## Contributing
 
-To build and install lanes locally, you will need to have [Go
+To build and install ``lanes`` locally, you will need to have [Go
 1.8](https://golang.org/dl/) or newer, as well as [Glide](http://glide.sh) to
 manage the build dependencies.
 

@@ -9,7 +9,7 @@ import (
 )
 
 var initProfileCmd = &cobra.Command{
-	Use:   "profile [NAME]",
+	Use:   "profile [NAME] [AWS ACCESS KEY ID]",
 	Short: "Initialize a new lane profile called NAME",
 	Args:  cobra.MaximumNArgs(2),
 
