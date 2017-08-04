@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/codekoala/go-aws-lanes"
+	"github.com/codekoala/go-aws-lanes/ssh"
 )
 
 var initCmd = &cobra.Command{
@@ -17,7 +18,8 @@ var initCmd = &cobra.Command{
 			cfg *lanes.Config
 			err error
 
-			force, _ = cmd.Flags().GetBool("force")
+			noProfile, _ = cmd.Flags().GetBool("no-profile")
+			force, _     = cmd.Flags().GetBool("force")
 		)
 
 		if _, err = os.Stat(lanes.CONFIG); err == nil {
@@ -39,5 +41,26 @@ var initCmd = &cobra.Command{
 			cmd.Printf("Failed to write configuration: %s\n", err)
 			os.Exit(1)
 		}
+
+		if !noProfile {
+			if err = NewProfile(cfg, "default"); err != nil {
+				cmd.Printf("Failed to write default profile: %s\n", err)
+				os.Exit(1)
+			}
+		}
 	},
+}
+
+func NewProfile(cfg *lanes.Config, name string) error {
+	p := lanes.Profile{
+		SSH: ssh.Config{
+			Mods: map[string]*ssh.Profile{
+				"dev":   &ssh.Profile{Identity: "~/.ssh/id_rsa_dev"},
+				"stage": &ssh.Profile{Identity: "~/.ssh/id_rsa_stage"},
+				"prod":  &ssh.Profile{Identity: "~/.ssh/id_rsa_prod"},
+			},
+		},
+	}
+
+	return p.Write(name)
 }

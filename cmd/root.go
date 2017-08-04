@@ -42,6 +42,7 @@ func init() {
 
 	filePushCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 	initCmd.Flags().BoolP("force", "f", false, "Overwrite existing configuration")
+	initCmd.Flags().BoolP("no-profile", "n", false, "Do not create a default profile")
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 }
 

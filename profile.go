@@ -15,11 +15,12 @@ import (
 type Profile struct {
 	AWSAccessKeyId     string `yaml:"aws_access_key_id"`
 	AWSSecretAccessKey string `yaml:"aws_secret_access_key"`
-	Region             string `yaml:"region"`
+	Region             string `yaml:"region,omitempty"`
 
 	SSH ssh.Config `yaml:"ssh"`
 
-	global *Config
+	global    *Config
+	overwrite bool
 }
 
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
@@ -57,6 +58,11 @@ func LoadProfileBytes(in []byte) (prof *Profile, err error) {
 	}
 
 	return prof, nil
+}
+
+// SetOverwrite allows other packages to mark this profile as one that can safely be overwritten.
+func (this *Profile) SetOverwrite(value bool) {
+	this.overwrite = value
 }
 
 // Validate checks that the profile includes the necessary information to interact with AWS.
@@ -128,6 +134,11 @@ func (this *Profile) Write(name string) (err error) {
 // WriteFile saves the current profile settings to the specified file.
 func (this *Profile) WriteFile(name, dest string) (err error) {
 	var out []byte
+
+	// don't overwrite existing profiles without a flag being set to allow it
+	if _, err = os.Stat(dest); err == nil && !this.overwrite {
+		return fmt.Errorf("profile %q already exists", name)
+	}
 
 	if out, err = this.WriteBytes(); err != nil {
 		return
