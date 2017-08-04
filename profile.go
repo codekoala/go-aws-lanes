@@ -21,6 +21,7 @@ type Profile struct {
 	global *Config
 }
 
+// Validate checks that the profile includes the necessary information to interact with AWS.
 func (this *Profile) Validate() error {
 	if this.AWSAccessKeyId == "" {
 		return ErrMissingAccessKey
@@ -41,24 +42,30 @@ func (this *Profile) Validate() error {
 	return nil
 }
 
+// Activate sets some environment variables to access AWS using a given profile.
 func (this *Profile) Activate() {
 	os.Setenv("AWS_ACCESS_KEY_ID", this.AWSAccessKeyId)
 	os.Setenv("AWS_SECRET_ACCESS_KEY", this.AWSSecretAccessKey)
 }
 
+// Deactivate unsets environment variables to no longer access AWS with this profile.
 func (this *Profile) Deactivate() {
 	os.Unsetenv("AWS_ACCESS_KEY_ID")
 	os.Unsetenv("AWS_SECRET_ACCESS_KEY")
 }
 
+// FetchServers retrieves all EC2 instances for the current profile.
 func (this *Profile) FetchServers(svc *ec2.EC2) ([]*Server, error) {
 	return this.FetchServersBy(svc, nil)
 }
 
+// FetchServersInLane retrieves all EC2 instances in the specified lane for the current profile.
 func (this *Profile) FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
 	return this.FetchServersBy(svc, CreateLaneFilter(lane))
 }
 
+// FetchServersBy retrieves all EC2 instances for the current profile using any specified filters. Each instance is
+// automatically tagged with the appropriate SSH profile to access it.
 func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []*Server, err error) {
 	var exists bool
 
