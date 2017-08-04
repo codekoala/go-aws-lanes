@@ -28,7 +28,7 @@ var sshCmd = &cobra.Command{
 		}
 
 		if svr, err = ChooseServer(lane); err != nil {
-			cmd.Printf(err.Error())
+			cmd.Println(err.Error())
 			os.Exit(1)
 		}
 

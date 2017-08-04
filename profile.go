@@ -143,7 +143,7 @@ func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesIn
 
 	for _, svr := range servers {
 		if svr.profile, exists = this.SSH.Mods[svr.Lane]; !exists {
-			fmt.Printf("WARNING: no profile found for server %s", svr)
+			fmt.Printf("WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
 		}
 	}
 

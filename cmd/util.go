@@ -6,11 +6,13 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"syscall"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/codekoala/go-aws-lanes"
 )
@@ -19,8 +21,10 @@ var (
 	ErrCanceled = errors.New("Canceled")
 )
 
+// InputParseFunction deal with validating and saving user input to the appropriate variable.
 type InputParseFunction func(string) error
 
+// RequireProfile ensures that a valid profile is configured before allowing certain commands to proceed.
 func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 	fmt.Printf("Current profile: %s\n", Config.Profile)
 	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
@@ -41,6 +45,8 @@ func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 	return nil
 }
 
+// DisplayLaneAndConfirm displays a table of all instances in the specified lane and requires the user to confirm their
+// intentions before allowing the calling operation to continue.
 func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.Server, err error) {
 	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
 		err = fmt.Errorf("failed to fetch servers: %s", err)
@@ -54,6 +60,8 @@ func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.
 	return servers, nil
 }
 
+// DisplayAndConfirm displays a table with the specified servers and requires the user to confirm their intentions
+// before allowing the calling operation to continue.
 func DisplayAndConfirm(servers []*lanes.Server, prompt string, confirm bool) (err error) {
 	parse := func(input string) (err error) {
 		if input != "CONFIRM" {
@@ -76,12 +84,38 @@ func DisplayAndConfirm(servers []*lanes.Server, prompt string, confirm bool) (er
 	return nil
 }
 
+// ReadInput accepts user input, optionally hiding user input for sensitive data.
+func ReadInput(hideInput bool) (out string, err error) {
+	if hideInput {
+		var pw []byte
+		if pw, err = terminal.ReadPassword(int(syscall.Stdin)); err != nil {
+			return
+		}
+
+		fmt.Printf("\n")
+		out = string(pw)
+	} else {
+		if _, err = fmt.Scanln(&out); err != nil {
+			return
+		}
+	}
+
+	return out, nil
+}
+
+// Prompt displays a regular prompt for user input.
 func Prompt(prompt string, parser InputParseFunction) (err error) {
+	return PromptHideInput(prompt, parser, false)
+}
+
+// PromptHideInput displays a prompt for user input, optionally hiding user input. The prompt is displayed until the
+// user's input is deemed valid.
+func PromptHideInput(prompt string, parser InputParseFunction, hideInput bool) (err error) {
 	var input string
 
 	for {
 		fmt.Printf("%s ", prompt)
-		if _, err = fmt.Scanln(&input); err != nil {
+		if input, err = ReadInput(hideInput); err != nil {
 			if err == io.EOF {
 				goto Cancel
 			}
@@ -112,6 +146,8 @@ Cancel:
 	return ErrCanceled
 }
 
+// ChooseServer displays a table of all instances in the specified lane and prompts the user to select one server
+// before proceeding with the calling operation.
 func ChooseServer(lane string) (svr *lanes.Server, err error) {
 	var (
 		servers []*lanes.Server

@@ -63,7 +63,7 @@ var initProfileCmd = &cobra.Command{
 			return nil
 		}
 
-		if err = Prompt("AWS secret access key?", parseSecretKey); err != nil {
+		if err = PromptHideInput("AWS secret access key?", parseSecretKey, true); err != nil {
 			cmd.Printf("Error: %s\n", err)
 			os.Exit(1)
 		}
