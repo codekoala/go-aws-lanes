@@ -1,7 +1,6 @@
 package lanes
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,11 +9,6 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/codekoala/go-aws-lanes/ssh"
-)
-
-var (
-	ErrMissingAccessKey = errors.New("missing AWS access key ID")
-	ErrMissingSecretKey = errors.New("missing AWS secret key")
 )
 
 type Profile struct {
@@ -36,8 +30,12 @@ func (this *Profile) Validate() error {
 		return ErrMissingSecretKey
 	}
 
-	if this.Region == "" {
-		this.Region = this.global.Region
+	if this.global != nil {
+		if this.Region == "" {
+			this.Region = this.global.Region
+		}
+	} else {
+		this.Region = os.Getenv("LANES_REGION")
 	}
 
 	return nil

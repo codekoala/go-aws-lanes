@@ -14,6 +14,7 @@ func EnvDefault(varName string, values ...string) (value string) {
 
 			// set the value in the environment for future use
 			os.Setenv(varName, value)
+			break
 		}
 	}
 

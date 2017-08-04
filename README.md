@@ -122,9 +122,9 @@ behavior:
   ``us-west-2``
 * ``LANES_DISABLE_UTF8``: set this to any value to use ASCII for table borders.
   UTF-8 borders are enabled by default.
-* ``LANES_LANE_TAG``: the EC2 instance tag to use for determining which lane an
+* ``LANES_TAG_LANE``: the EC2 instance tag to use for determining which lane an
   instance belongs to. Default: ``Lane``
-* ``LANES_NAME_TAG``: the EC2 instance tag to use for determining an instance's
+* ``LANES_TAG_NAME``: the EC2 instance tag to use for determining an instance's
   name. Default: ``Name``
 
 ## Usage

@@ -16,6 +16,17 @@ var (
 	// CONFIG is the path to the Lanes configuration file to use.
 	CONFIG = EnvDefault("LANES_CONFIG", "$LANES_CONFIG_DIR/lanes.yml")
 
+	// DEFAULT_REGION is the name of the default region to use. This can be customized at compile time.
+	DEFAULT_REGION = "us-west-2"
+
+	// DEFAULT_TAG_NAME is the name of the default EC2 instance tag to use for determining an instance's name. This can
+	// be customized at compile time.
+	DEFAULT_TAG_NAME = "Name"
+
+	// DEFAULT_TAG_LANE is the name of the default EC2 instance tag to use for determining an instance's lane. This can
+	// be customized at compile time.
+	DEFAULT_TAG_LANE = "Lane"
+
 	config *Config
 )
 
@@ -30,10 +41,10 @@ type Config struct {
 	DisableUTF8 bool `yaml:"disable_utf8,omitempty"`
 
 	// Tags includes the names of interesting tags for EC2 instances.
-	Tags ConfigTags `yaml:"tags,omitempty"`
+	Tags TagNames `yaml:"tags,omitempty"`
 }
 
-type ConfigTags struct {
+type TagNames struct {
 	// Name is the name of the EC2 tag to use when determining a server's name.
 	Name string `yaml:"name,omitempty"`
 
@@ -79,12 +90,14 @@ func LoadConfigBytes(in []byte) (c *Config, err error) {
 	}
 
 	c.DisableUTF8 = os.Getenv("LANES_DISABLE_UTF8") != "" || c.DisableUTF8
-	c.Region = EnvDefault("LANES_REGION", c.Region, "us-west-2")
-	c.Tags.Name = EnvDefault("LANES_TAG_NAME", c.Tags.Name, "Name")
-	c.Tags.Lane = EnvDefault("LANES_TAG_LANE", c.Tags.Lane, "Lane")
+	c.Region = EnvDefault("LANES_REGION", c.Region, DEFAULT_REGION)
+	c.Tags.Name = EnvDefault("LANES_TAG_NAME", c.Tags.Name, DEFAULT_TAG_NAME)
+	c.Tags.Lane = EnvDefault("LANES_TAG_LANE", c.Tags.Lane, DEFAULT_TAG_LANE)
 
 	// set a global config variable for later use
 	config = c
+
+	fmt.Printf("%#v\n", c)
 
 	return c, nil
 }

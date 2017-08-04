@@ -22,7 +22,7 @@ func TestProfileValidate(t *testing.T) {
 	assert.Nil(t, p.Validate())
 
 	// default region set by env var
-	assert.Equal(t, p.Region, lanes.REGION)
+	assert.Equal(t, p.Region, lanes.DEFAULT_REGION)
 }
 
 func TestProfileActivate(t *testing.T) {
