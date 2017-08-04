@@ -67,7 +67,10 @@ func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 		return fmt.Errorf("No servers found.")
 	}
 
-	termtables.EnableUTF8()
+	if !DISABLE_UTF8 {
+		termtables.EnableUTF8()
+	}
+
 	table := termtables.CreateTable()
 	table.AddTitle("AWS Servers")
 	table.AddHeaders("IDX", "LANE", "SERVER", "IP ADDRESS", "ID")

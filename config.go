@@ -19,6 +19,9 @@ var (
 	// REGION is the default region to use for any profile that doesn't have a region explicitly set.
 	REGION = EnvDefault("LANES_REGION", "us-west-2")
 
+	// DISABLE_UTF8 switches the output tables to use ASCII instead of UTF-8 for borders.
+	DISABLE_UTF8 = os.Getenv("LANES_DISABLE_UTF8") != ""
+
 	// LANE_TAG is the name of the EC2 tag to use when determining which lane a server belongs in.
 	LANE_TAG = EnvDefault("LANES_LANE_TAG", "Lane")
 
