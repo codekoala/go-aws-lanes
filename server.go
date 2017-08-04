@@ -22,6 +22,8 @@ type Server struct {
 	Name string
 	Lane string
 	IP   string
+
+	profile *ssh.Profile
 }
 
 func (this *Server) Login(profile *ssh.Profile, args []string) error {
@@ -67,7 +69,7 @@ func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 		return fmt.Errorf("No servers found.")
 	}
 
-	if !DISABLE_UTF8 {
+	if !config.DisableUTF8 {
 		termtables.EnableUTF8()
 	}
 
@@ -84,18 +86,12 @@ func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 	return nil
 }
 
-func FetchServers(svc *ec2.EC2) ([]*Server, error) {
-	return FetchServersBy(svc, nil)
-}
-
-func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
-	var input *ec2.DescribeInstancesInput
-
+func CreateLaneFilter(lane string) (input *ec2.DescribeInstancesInput) {
 	if lane != "" {
 		input = &ec2.DescribeInstancesInput{
 			Filters: []*ec2.Filter{{
 				Name:   aws.String("tag-key"),
-				Values: []*string{aws.String(LANE_TAG)},
+				Values: []*string{aws.String(config.Tags.Lane)},
 			}, {
 				Name:   aws.String("tag-value"),
 				Values: []*string{aws.String(lane)},
@@ -103,17 +99,27 @@ func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
 		}
 	}
 
-	return FetchServersBy(svc, input)
+	return
+}
+
+func FetchServers(svc *ec2.EC2) ([]*Server, error) {
+	return FetchServersBy(svc, nil)
+}
+
+func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
+	return FetchServersBy(svc, CreateLaneFilter(lane))
 }
 
 func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []*Server, err error) {
 	var out *ec2.DescribeInstancesOutput
 
 	fmt.Printf("Fetching servers... ")
-	defer fmt.Println("done")
 	spin := spinner.New(spinner.CharSets[21], 50*time.Millisecond)
 	spin.Start()
-	defer spin.Stop()
+	defer func() {
+		spin.Stop()
+		fmt.Println("done")
+	}()
 
 	if out, err = svc.DescribeInstances(input); err != nil {
 		return
@@ -136,9 +142,9 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 				}
 
 				switch *tag.Key {
-				case NAME_TAG:
+				case config.Tags.Name:
 					svr.Name = *tag.Value
-				case LANE_TAG:
+				case config.Tags.Lane:
 					svr.Lane = *tag.Value
 				}
 			}
