@@ -1,5 +1,5 @@
 hash: 495adafc2f09ada6c8f98a27cb0275809089a27259e90d460836fdaf2775f2e6
-updated: 2017-08-04T14:51:26.274015629-04:00
+updated: 2017-08-04T15:34:51.434012787-04:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
@@ -67,8 +67,7 @@ imports:
   subpackages:
   - ssh/terminal
 - name: golang.org/x/sys
-  version: e24f485414aeafb646f6fca458b0bf869c0880a1
-  repo: https://go.googlesource.com/sys
+  version: 99f16d856c9836c42d24e7ab64ea72916925fa97
   subpackages:
   - unix
 - name: gopkg.in/yaml.v2
