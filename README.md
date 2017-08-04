@@ -69,9 +69,11 @@ user acceptance testing, and one called "prod" for production servers.
 
 For example:
 
-    curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.1.1/lanes_linux_amd64
-    chmod +x /tmp/lanes
-    sudo mv /tmp/lanes /usr/local/bin/lanes
+```shell
+$ curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.1.1/lanes_linux_amd64
+$ chmod +x /tmp/lanes
+$ sudo mv /tmp/lanes /usr/local/bin/lanes
+```
 
 To compile from source, please see the instructions in the [contributing section](#contributing).
 
@@ -232,7 +234,12 @@ $ make linux
 
 # for OSX systems
 $ make osx
+
+# for both Linux and OSX
+$ make
 ```
+
+The resulting binaries will appear as ``./bin/lanes_$GOOS_$GOARCH``.
 
 If you just want to run the tests:
 
