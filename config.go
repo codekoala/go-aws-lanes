@@ -118,7 +118,13 @@ func (this *Config) WriteFile(dest string) (err error) {
 		return
 	}
 
-	return ioutil.WriteFile(dest, out, 0644)
+	if err = ioutil.WriteFile(dest, out, 0600); err != nil {
+		return
+	}
+
+	fmt.Printf("Configuration written to %s\n", dest)
+
+	return nil
 }
 
 // WriteBytes marshals the current settings to YAML.
