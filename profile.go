@@ -23,6 +23,30 @@ type Profile struct {
 	overwrite bool
 }
 
+// GetSampleProfile returns a sample profile that is easy to use as an example.
+func GetSampleProfile() *Profile {
+	return &Profile{
+		SSH: ssh.Config{
+			Mods: map[string]*ssh.Profile{
+				"dev": &ssh.Profile{
+					Identity: "~/.ssh/id_rsa_dev",
+					Tunnels: []string{
+						"8080:127.0.0.1:80",
+						"3306:127.0.0.1:3306",
+					},
+				},
+				"stage": &ssh.Profile{
+					Identity: "~/.ssh/id_rsa_stage",
+					Tunnel:   "8080:127.0.0.1:80",
+				},
+				"prod": &ssh.Profile{
+					Identity: "~/.ssh/id_rsa_prod",
+				},
+			},
+		},
+	}
+}
+
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
 // the named profile.
 func GetProfilePath(name string) string {

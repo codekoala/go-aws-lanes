@@ -80,7 +80,7 @@ func Prompt(prompt string, parser InputParseFunction) (err error) {
 	var input string
 
 	for {
-		fmt.Printf("\n%s ", prompt)
+		fmt.Printf("%s ", prompt)
 		if _, err = fmt.Scanln(&input); err != nil {
 			if err == io.EOF {
 				goto Cancel
@@ -140,7 +140,7 @@ func ChooseServer(lane string) (svr *lanes.Server, err error) {
 		return nil
 	}
 
-	if err = Prompt("Which server?", parse); err != nil {
+	if err = Prompt("\nWhich server?", parse); err != nil {
 		return svr, ErrCanceled
 	}
 

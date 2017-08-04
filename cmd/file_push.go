@@ -35,7 +35,7 @@ var filePushCmd = &cobra.Command{
 		}
 
 		cmd.Printf("Servers that will receive the specified files:\n")
-		if servers, err = DisplayLaneAndConfirm(lane, "Type CONFIRM to begin pushing files:", confirmed); err != nil {
+		if servers, err = DisplayLaneAndConfirm(lane, "\nType CONFIRM to begin pushing files:", confirmed); err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
