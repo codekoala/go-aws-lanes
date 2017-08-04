@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/apcera/termtables"
@@ -50,7 +51,7 @@ func (this *Server) Push(profile *ssh.Profile, dest string, sources ...string) e
 }
 
 func (this *Server) SortKey() string {
-	return fmt.Sprintf("%s %s %s", this.Lane, this.Name, this.ID)
+	return strings.ToLower(fmt.Sprintf("%s %s %s", this.Lane, this.Name, this.ID))
 }
 
 func (this *Server) String() string {
