@@ -77,56 +77,6 @@ $ sudo mv /tmp/lanes /usr/local/bin/lanes
 
 To compile from source, please see the instructions in the [contributing section](#contributing).
 
-## Configuration
-
-The configuration for this tool lives in ``$HOME/.lanes/`` by default. Create a
-``$HOME/.lanes/lanes.yml`` file with the following content:
-
-```yaml
-profile: demo
-```
-
-Next, create a ``$HOME/.lanes/demo.yml`` file with contents such as the
-following:
-
-```yaml
-aws_access_key_id: [your AWS_ACCESS_KEY_ID for the "demo" profile]
-aws_secret_access_key: [your AWS_SECRET_ACCESS_KEY for the "demo" profile]
-ssh:
-  mods:
-    dev:
-      identity: ~/.ssh/id_rsa_demo_dev
-      tunnels:
-        - 8080:127.0.0.1:80
-        - 3306:127.0.0.1:3306
-    uat:
-      identity: ~/.ssh/id_rsa_demo_uat
-      tunnel: 8080:127.0.0.1:80
-    prod:
-      identity: ~/.ssh/id_rsa_demo_prod
-```
-
-You can create additional profiles by creating new YAML files using this
-pattern: ``$HOME/.lanes/[profile name].yml``
-
-### Environment Variables
-
-``lanes`` supports a handful of environment variables to quickly change
-behavior:
-
-* ``LANES_CONFIG_DIR``: the directory where all configuration is expected to
-  reside. Default: ``$HOME/.lanes/``
-* ``LANES_CONFIG``: the configuration file to use for lanes. Default:
-  ``$LANES_CONFIG_DIR/lanes.yml``
-* ``LANES_REGION``: the AWS region to use when listing EC2 instances. Default:
-  ``us-west-2``
-* ``LANES_DISABLE_UTF8``: set this to any value to use ASCII for table borders.
-  UTF-8 borders are enabled by default.
-* ``LANES_TAG_LANE``: the EC2 instance tag to use for determining which lane an
-  instance belongs to. Default: ``Lane``
-* ``LANES_TAG_NAME``: the EC2 instance tag to use for determining an instance's
-  name. Default: ``Name``
-
 ## Usage
 
 ### Initializing New Systems
@@ -248,6 +198,90 @@ $ lanes file push dev localfile.txt magic.log /tmp/
 # /tmp/ on all instances without confirmation
 $ lanes file push dev --confirm localfile.txt magic.log /tmp/
 ```
+
+## Configuration
+
+The configuration for this tool lives in ``$HOME/.lanes/`` by default. There
+are two forms of configuration for ``lanes``: the configuration for ``lanes``
+itself and configuration for individual lanes in their respective files.
+
+The configuration for ``lanes`` itself lives in ``$HOME/.lanes/lanes.yml`` by
+default. Here are the configuration options:
+
+```yaml
+profile: default
+region: us-west-2
+disable_utf8: false
+tags:
+  name: Name
+  lane: Lane
+```
+
+* ``profile: default``: this indicates that the "lane profile" should be read
+  from ``$HOME/.lanes/default.yml``.
+* ``region: us-west-2``: this is the default AWS region to use when querying
+  EC2 instances.
+* ``disable_utf8: false``: this setting can be used to toggle UTF-8 and ASCII
+  mode for table borders.
+* ``tags.name: Name``: this indicates that the EC2 instance tag named "Name"
+  will be used to determine each instance's name. Change this if you use a
+  different tag name in your environment.
+* ``tags.lane: Lane``: this indicates that the EC2 instance tag named "Lane"
+  will be used to determine each instance's lane. Change this if you use a
+  different tag name in your environment.
+
+The configuration for an individual lane lives in ``$HOME/.lanes/[lane profile
+name].yml`` by default. Here are the configuration options:
+
+```yaml
+aws_access_key_id: ASDF
+aws_secret_access_key: FDSA
+region: us-east-1
+ssh:
+  mods:
+    dev:
+      identity: ~/.ssh/id_rsa_dev
+      tunnels:
+        - 8080:127.0.0.1:80
+        - 3306:127.0.0.1:3306
+    uat:
+      identity: ~/.ssh/id_rsa_uat
+      tunnel: 8080:127.0.0.1:80
+    prod:
+      identity: ~/.ssh/id_rsa_prod
+```
+
+* ``aws_access_key_id``: the AWS access key ID for the lane profile.
+* ``aws_secret_access_key``: the AWS secret access key for the lane profile.
+* ``region``: the default region for this lane profile. If not specified, the
+  region will be determined by the global configuration for ``lanes`` (see
+  above).
+* ``ssh.mods.[lane name].user``: the username to use when SSH'ing into an EC2
+  instance in the specified lane.
+* ``ssh.mods.[lane name].identity``: the private key to use when SSH'ing into
+  instances in the specified lane.
+* ``ssh.mods.[lane name].tunnel``: a single tunnel to setup when SSH'ing to a
+  specific EC2 instance in the specified lane.
+* ``ssh.mods.[lane name].tunnels``: a list of tunnels to setup when SSH'ing to
+  a specific EC2 instance in the specified lane.
+
+### Environment Variables
+
+``lanes`` supports a handful of environment variables to quickly change
+behavior:
+
+* ``LANES_CONFIG_DIR``: the directory where all configuration is expected to
+  reside. Default: ``$HOME/.lanes/``
+* ``LANES_CONFIG``: the configuration file to use for lanes. Default:
+  ``$LANES_CONFIG_DIR/lanes.yml``
+* ``LANES_REGION``: the AWS region to use when listing EC2 instances. Default:
+  ``us-west-2``
+* ``LANES_DISABLE_UTF8``: set this to any value to use ASCII for table borders.
+  UTF-8 borders are enabled by default.
+* ``LANES_TAG_LANE``: the EC2 instance tag to use for determining which lane an
+  instance belongs to. Default: ``Lane``
+* ``LANES_TAG_NAME``: the EC2 instance tag to use for determining an instance's
+  name. Default: ``Name``
 
 ## Contributing
 
