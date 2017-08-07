@@ -63,6 +63,8 @@ user acceptance testing, and one called "prod" for production servers.
 
 ## Installation
 
+### Manual Installation
+
 1. Download a pre-compiled, released version from [the releases
    page](https://github.com/codekoala/go-aws-lanes/releases)
 2. Mark the binary as executable
@@ -77,6 +79,11 @@ $ sudo mv /tmp/lanes /usr/local/bin/lanes
 ```
 
 To compile from source, please see the instructions in the [contributing section](#contributing).
+
+### Arch Linux
+
+There is a PKGBUILD in the [AUR](https://aur.archlinux.org/packages/aws-lanes/)
+to help package and install ``lanes`` for Arch Linux-based distributions.
 
 ## Usage
 

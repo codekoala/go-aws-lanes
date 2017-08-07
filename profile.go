@@ -28,18 +28,18 @@ func GetSampleProfile() *Profile {
 	return &Profile{
 		SSH: ssh.Config{
 			Mods: map[string]*ssh.Profile{
-				"dev": &ssh.Profile{
+				"dev": {
 					Identity: "~/.ssh/id_rsa_dev",
 					Tunnels: []string{
 						"8080:127.0.0.1:80",
 						"3306:127.0.0.1:3306",
 					},
 				},
-				"stage": &ssh.Profile{
+				"stage": {
 					Identity: "~/.ssh/id_rsa_stage",
 					Tunnel:   "8080:127.0.0.1:80",
 				},
-				"prod": &ssh.Profile{
+				"prod": {
 					Identity: "~/.ssh/id_rsa_prod",
 				},
 			},
