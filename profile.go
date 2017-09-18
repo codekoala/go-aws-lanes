@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/yaml.v2"
 
 	"github.com/codekoala/go-aws-lanes/ssh"
@@ -50,7 +51,71 @@ func GetSampleProfile() *Profile {
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
 // the named profile.
 func GetProfilePath(name string) string {
-	return path.Join(CONFIG_DIR, name+".yml")
+	path := filepath.Join(CONFIG_DIR, name+".yml")
+
+	CheckProfilePermissions(path)
+
+	return path
+}
+
+// CheckProfilePermissions looks for any concerns with permissions that are too permissible for Lanes profiles.
+func CheckProfilePermissions(path string) {
+	var result error
+
+	// check the directory first
+	dFatal, dErr := CheckPermissions(filepath.Dir(path))
+	if dErr != nil {
+		result = multierror.Append(dErr)
+	}
+
+	// check the actual profile
+	pFatal, pErr := CheckPermissions(path)
+	if pErr != nil {
+		result = multierror.Append(pErr)
+	}
+
+	prefix := "WARNING"
+	fatal := dFatal || pFatal
+	if fatal {
+		prefix = "ERROR"
+	}
+
+	if result != nil {
+		fmt.Printf("%s: checking profile permissions, %s\n\n", prefix, result)
+	}
+
+	if fatal {
+		os.Exit(1)
+	}
+}
+
+// CheckPermissions looks for possible concerns with directory and file permissions.
+func CheckPermissions(path string) (fatal bool, result error) {
+	pStats, err := os.Stat(path)
+	if err != nil {
+		fatal = true
+		result = multierror.Append(result, err)
+	} else {
+		mode := pStats.Mode()
+
+		// check user permissions
+		if (mode&0700)>>6 <= 3 {
+			fatal = true
+			result = multierror.Append(result, fmt.Errorf("%s is not user-accessible", path))
+		}
+
+		// check group permissions
+		if (mode&0070)>>3 != 0 {
+			result = multierror.Append(result, fmt.Errorf("%s is group-accessible", path))
+		}
+
+		// check world permissions
+		if mode&0007 != 0 {
+			result = multierror.Append(result, fmt.Errorf("%s is world-accessible", path))
+		}
+	}
+
+	return
 }
 
 // LoadProfile attempts to read the specified profile from the filesystem.
@@ -169,7 +234,7 @@ func (this *Profile) WriteFile(name, dest string) (err error) {
 	}
 
 	// make sure the destination directory exists
-	if err = os.MkdirAll(path.Dir(dest), 0700); err != nil {
+	if err = os.MkdirAll(filepath.Dir(dest), 0700); err != nil {
 		return
 	}
 

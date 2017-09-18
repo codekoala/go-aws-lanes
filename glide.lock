@@ -1,5 +1,5 @@
-hash: 495adafc2f09ada6c8f98a27cb0275809089a27259e90d460836fdaf2775f2e6
-updated: 2017-09-18T15:16:03.640613906-04:00
+hash: 2770d8e60e84b3a5b782b52e6dbd952e55e1058a9e7e6e8c147420e91bb69229
+updated: 2017-09-18T15:39:29.215184061-04:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
@@ -39,6 +39,8 @@ imports:
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
 - name: github.com/go-ini/ini
   version: e7fea39b01aea8d5671f6858f0532f56e8bff3a5
+- name: github.com/hashicorp/go-multierror
+  version: ed905158d87462226a13fe39ddf685ea65f1c11f
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jmespath/go-jmespath
