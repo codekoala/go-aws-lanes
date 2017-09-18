@@ -1,12 +1,12 @@
 hash: 495adafc2f09ada6c8f98a27cb0275809089a27259e90d460836fdaf2775f2e6
-updated: 2017-08-04T15:34:51.434012787-04:00
+updated: 2017-09-18T15:16:03.640613906-04:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
   subpackages:
   - term
 - name: github.com/aws/aws-sdk-go
-  version: b33b08175d12b795daa7726c5577b39d06a2551c
+  version: 88849eea79e8e48241987b1f0a11a7a0dcbb7716
   subpackages:
   - aws
   - aws/awserr
