@@ -150,8 +150,9 @@ Cancel:
 // before proceeding with the calling operation.
 func ChooseServer(lane string) (svr *lanes.Server, err error) {
 	var (
-		servers []*lanes.Server
-		idx     int
+		servers   []*lanes.Server
+		selection *lanes.Server
+		idx       int
 	)
 
 	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
@@ -176,9 +177,19 @@ func ChooseServer(lane string) (svr *lanes.Server, err error) {
 		return nil
 	}
 
-	if err = Prompt("\nWhich server?", parse); err != nil {
-		return svr, ErrCanceled
+	switch len(servers) {
+	case 0:
+		return nil, ErrCanceled
+	case 1:
+		selection = servers[0]
+	default:
+		prompt := fmt.Sprintf("\nWhich server (1-%d)?", len(servers))
+		if err = Prompt(prompt, parse); err != nil {
+			return svr, ErrCanceled
+		}
+
+		selection = servers[idx-1]
 	}
 
-	return servers[idx-1], nil
+	return selection, nil
 }
