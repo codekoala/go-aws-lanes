@@ -33,25 +33,31 @@ func init() {
 	pfs := RootCmd.PersistentFlags()
 	pfs.StringP("profile", "p", "", "use specific profile (for supported commands)")
 
-	fileCmd.AddCommand(filePushCmd)
-	initCmd.AddCommand(initProfileCmd)
-
 	RootCmd.AddCommand(autoCompleteCmd)
 	RootCmd.AddCommand(editCmd)
-	RootCmd.AddCommand(fileCmd)
-	RootCmd.AddCommand(initCmd)
-	RootCmd.AddCommand(listCmd)
-	RootCmd.AddCommand(profilesCmd)
-	RootCmd.AddCommand(shCmd)
-	RootCmd.AddCommand(sshCmd)
-	RootCmd.AddCommand(switchCmd)
-	RootCmd.AddCommand(versionCmd)
 
 	filePushCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
+	fileCmd.AddCommand(filePushCmd)
+	RootCmd.AddCommand(fileCmd)
+
 	initCmd.Flags().BoolP("force", "f", false, "Overwrite existing configuration")
 	initCmd.Flags().BoolP("no-profile", "n", false, "Do not create a default profile")
 	initProfileCmd.Flags().BoolP("no-switch", "n", false, "Do not automatically switch to the new profile")
+	initCmd.AddCommand(initProfileCmd)
+
+	RootCmd.AddCommand(initCmd)
+
+	RootCmd.AddCommand(listCmd)
+
+	profilesCmd.Flags().BoolP("batch", "b", false, "Batch mode")
+	RootCmd.AddCommand(profilesCmd)
+
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
+	RootCmd.AddCommand(shCmd)
+
+	RootCmd.AddCommand(sshCmd)
+	RootCmd.AddCommand(switchCmd)
+	RootCmd.AddCommand(versionCmd)
 }
 
 func Execute() (err error) {

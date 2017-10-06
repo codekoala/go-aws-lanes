@@ -11,11 +11,20 @@ var profilesCmd = &cobra.Command{
 	Short: "List all lanes profiles",
 	Args:  cobra.NoArgs,
 
-	PersistentPreRunE: RequireProfile,
-
 	Run: func(cmd *cobra.Command, args []string) {
+		var (
+			batch, _ = cmd.Flags().GetBool("batch")
+			format   = "  * %s\n"
+		)
+
+		if batch {
+			format = "%s\n"
+		} else {
+			cmd.Println("Available profiles:\n")
+		}
+
 		for _, profile := range lanes.GetAvailableProfiles() {
-			cmd.Printf("- %s\n", profile)
+			cmd.Printf(format, profile)
 		}
 	},
 }
