@@ -26,6 +26,10 @@ type InputParseFunction func(string) error
 
 // RequireProfile ensures that a valid profile is configured before allowing certain commands to proceed.
 func RequireProfile(cmd *cobra.Command, args []string) (err error) {
+	if profileName, _ := cmd.Flags().GetString("profile"); profileName != "" {
+		Config.Profile = profileName
+	}
+
 	fmt.Printf("Current profile: %s\n", Config.Profile)
 	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
 		fmt.Printf("Error: %s\n", err)

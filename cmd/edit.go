@@ -10,31 +10,22 @@ import (
 )
 
 var editCmd = &cobra.Command{
-	Use:     "edit [profile]",
-	Short:   "Edit the configuration for the current or named Lanes profile",
-	Args:    cobra.MaximumNArgs(1),
+	Use:     "edit",
+	Short:   "Edit the Lanes profile configuration",
+	Args:    cobra.NoArgs,
 	Aliases: []string{"ed"},
 
 	PersistentPreRunE: RequireProfile,
 
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
-		var (
-			profile string
-			editor  = os.Getenv("EDITOR")
-		)
-
-		if len(args) > 0 {
-			profile = args[0]
-		} else {
-			profile = Config.Profile
-		}
+		var editor = os.Getenv("EDITOR")
 
 		if editor == "" {
 			editor = "vi"
 		}
 
-		cmd.Printf("Editing profile %q using %s\n", profile, editor)
-		ed := exec.Command(editor, lanes.GetProfilePath(profile, true))
+		cmd.Printf("Editing profile %q using %s\n", Config.Profile, editor)
+		ed := exec.Command(editor, lanes.GetProfilePath(Config.Profile, true))
 		ed.Stdout = os.Stdout
 		ed.Stderr = os.Stderr
 		ed.Stdin = os.Stdin

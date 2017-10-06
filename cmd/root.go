@@ -30,6 +30,9 @@ var (
 )
 
 func init() {
+	pfs := RootCmd.PersistentFlags()
+	pfs.StringP("profile", "p", "", "use specific profile (for supported commands)")
+
 	fileCmd.AddCommand(filePushCmd)
 	initCmd.AddCommand(initProfileCmd)
 
