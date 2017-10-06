@@ -36,10 +36,12 @@ func init() {
 	fileCmd.AddCommand(filePushCmd)
 	initCmd.AddCommand(initProfileCmd)
 
+	RootCmd.AddCommand(autoCompleteCmd)
 	RootCmd.AddCommand(editCmd)
 	RootCmd.AddCommand(fileCmd)
 	RootCmd.AddCommand(initCmd)
 	RootCmd.AddCommand(listCmd)
+	RootCmd.AddCommand(profilesCmd)
 	RootCmd.AddCommand(shCmd)
 	RootCmd.AddCommand(sshCmd)
 	RootCmd.AddCommand(switchCmd)

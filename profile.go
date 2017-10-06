@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/hashicorp/go-multierror"
@@ -46,6 +47,22 @@ func GetSampleProfile() *Profile {
 			},
 		},
 	}
+}
+
+// GetAvailableProfiles returns a list of all Lanes profiles found in the configuration directory.
+func GetAvailableProfiles() (found []string) {
+	matches, _ := filepath.Glob(filepath.Join(CONFIG_DIR, "*.yml"))
+	for _, match := range matches {
+		name := filepath.Base(strings.TrimSuffix(match, filepath.Ext(match)))
+		if name == "lanes" {
+			// this is not a profile
+			continue
+		}
+
+		found = append(found, name)
+	}
+
+	return
 }
 
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
