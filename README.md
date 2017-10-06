@@ -21,39 +21,39 @@ multiple sets of AWS credentials and perform the following operations:
     $ lanes ls
     Current profile: foo
     Fetching servers... done
-    ╭────────────────────────────────────────────────╮
-    │                  AWS Servers                   │
-    ├─────┬──────┬─────────┬────────────┬────────────┤
-    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ ID         │
-    ├─────┼──────┼─────────┼────────────┼────────────┤
-    │ 1   │ dev  │ dev-01  │ 1.2.3.4    │ i-12341234 │
-    │ 2   │ uat  │ uat-01  │ 1.2.3.5    │ i-12341235 │
-    │ 3   │ prod │ prod-01 │ 1.2.3.6    │ i-12341236 │
-    │ 4   │ prod │ prod-02 │ 1.2.3.7    │ i-12341237 │
-    ╰─────┴──────┴─────────┴────────────┴────────────╯
+    ╭──────────────────────────────────────────────────────────╮
+    │                       AWS Servers                        │
+    ├─────┬──────┬─────────┬────────────┬─────────┬────────────┤
+    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ STATE   │ ID         │
+    ├─────┼──────┼─────────┼────────────┼─────────┼────────────┤
+    │ 1   │ dev  │ dev-01  │ 1.2.3.4    │ running │ i-12341234 │
+    │ 2   │ uat  │ uat-01  │ 1.2.3.5    │ running │ i-12341235 │
+    │ 3   │ prod │ prod-01 │ 1.2.3.6    │ running │ i-12341236 │
+    │ 4   │ prod │ prod-02 │ 1.2.3.7    │ running │ i-12341237 │
+    ╰─────┴──────┴─────────┴────────────┴─────────┴────────────╯
 
     $ lanes ls dev
     Current profile: foo
     Fetching servers... done
-    ╭────────────────────────────────────────────────╮
-    │                  AWS Servers                   │
-    ├─────┬──────┬─────────┬────────────┬────────────┤
-    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ ID         │
-    ├─────┼──────┼─────────┼────────────┼────────────┤
-    │ 1   │ dev  │ dev-01  │ 1.2.3.4    │ i-12341234 │
-    ╰─────┴──────┴─────────┴────────────┴────────────╯
+    ╭──────────────────────────────────────────────────────────╮
+    │                  AWS Servers                             │
+    ├─────┬──────┬─────────┬────────────┬─────────┬────────────┤
+    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ STATE   │ ID         │
+    ├─────┼──────┼─────────┼────────────┼─────────┼────────────┤
+    │ 1   │ dev  │ dev-01  │ 1.2.3.4    │ running │ i-12341234 │
+    ╰─────┴──────┴─────────┴────────────┴─────────┴────────────╯
 
     $ lanes ls prod
     Current profile: foo
     Fetching servers... done
-    ╭────────────────────────────────────────────────╮
-    │                  AWS Servers                   │
-    ├─────┬──────┬─────────┬────────────┬────────────┤
-    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ ID         │
-    ├─────┼──────┼─────────┼────────────┼────────────┤
-    │ 1   │ prod │ prod-01 │ 1.2.3.6    │ i-12341236 │
-    │ 2   │ prod │ prod-02 │ 1.2.3.7    │ i-12341237 │
-    ╰─────┴──────┴─────────┴────────────┴────────────╯
+    ╭──────────────────────────────────────────────────────────╮
+    │                  AWS Servers                             │
+    ├─────┬──────┬─────────┬────────────┬─────────┬────────────┤
+    │ IDX │ LANE │ SERVER  │ IP ADDRESS │ STATE   │ ID         │
+    ├─────┼──────┼─────────┼────────────┼─────────┼────────────┤
+    │ 1   │ prod │ prod-01 │ 1.2.3.6    │ running │ i-12341236 │
+    │ 2   │ prod │ prod-02 │ 1.2.3.7    │ running │ i-12341237 │
+    ╰─────┴──────┴─────────┴────────────┴─────────┴────────────╯
 
 ## What Are Lanes?
 
@@ -89,8 +89,8 @@ to help package and install ``lanes`` for Arch Linux-based distributions.
 
 ### Initializing New Systems
 
-The first time you use ``lanes``, you will need to create the initial
-configuration files. For this, you can use the ``lanes init`` command.
+As of v0.2.1, initial configuration is handled the first time you run any lanes
+command. You may also use the ``lanes init`` command.
 
 ```bash
 # initialize a lanes and create a sample lanes profile
