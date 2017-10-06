@@ -18,8 +18,7 @@ import (
 )
 
 var (
-	ErrCanceled       = errors.New("Canceled")
-	ErrInvalidProfile = errors.New("invalid profile selected")
+	ErrCanceled = errors.New("Canceled")
 )
 
 // InputParseFunction deal with validating and saving user input to the appropriate variable.
@@ -29,7 +28,7 @@ type InputParseFunction func(string) error
 func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 	fmt.Printf("Current profile: %s\n", Config.Profile)
 	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
-		fmt.Println(ErrInvalidProfile)
+		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
 
