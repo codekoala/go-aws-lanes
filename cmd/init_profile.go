@@ -18,9 +18,10 @@ var initProfileCmd = &cobra.Command{
 			name string
 			err  error
 
-			fl      = cmd.Flags()
-			nargs   = fl.NArg()
-			profile = lanes.GetSampleProfile()
+			fl          = cmd.Flags()
+			nargs       = fl.NArg()
+			profile     = lanes.GetSampleProfile()
+			noSwitch, _ = cmd.Flags().GetBool("no-switch")
 		)
 
 		if nargs >= 1 {
@@ -72,6 +73,10 @@ var initProfileCmd = &cobra.Command{
 		if err = profile.Write(name); err != nil {
 			cmd.Printf("Failed to write default profile: %s\n", err)
 			os.Exit(1)
+		}
+
+		if !noSwitch {
+			SwitchToProfile(cmd, []string{name})
 		}
 	},
 }

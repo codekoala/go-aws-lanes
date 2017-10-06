@@ -124,7 +124,15 @@ $ lanes init profile foo ABCD
 ```
 
 Profiles created with this command will include examples for how to configure
-individual lanes.
+individual lanes. ``lanes`` automatically switches to profiles created with
+this command. If you would like to create a new profile without switching to it
+immediately, use the ``--no-switch`` or ``-n`` flags:
+
+```bash
+# create a new profile named "foo", prompting only for the AWS credentials,
+# without automatically switching to the new profile
+$ lanes init profile foo --no-switch
+```
 
 ### Editing Lane Profiles
 

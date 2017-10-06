@@ -48,13 +48,15 @@ func init() {
 	filePushCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 	initCmd.Flags().BoolP("force", "f", false, "Overwrite existing configuration")
 	initCmd.Flags().BoolP("no-profile", "n", false, "Do not create a default profile")
+	initProfileCmd.Flags().BoolP("no-switch", "n", false, "Do not automatically switch to the new profile")
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 }
 
 func Execute() (err error) {
 	isInit := strings.Contains(strings.Join(os.Args, " "), " init")
+	isProfileInit := strings.Contains(strings.Join(os.Args, " "), " init profile")
 
-	if !isInit {
+	if !isInit || isProfileInit {
 		if err = loadConfig(); err != nil {
 			if err != lanes.ErrAbort {
 				fmt.Println(err.Error())
