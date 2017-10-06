@@ -18,10 +18,11 @@ import (
 )
 
 type Server struct {
-	ID   string
-	Name string
-	Lane string
-	IP   string
+	ID    string
+	Name  string
+	Lane  string
+	IP    string
+	State string
 
 	profile *ssh.Profile
 }
@@ -95,10 +96,10 @@ func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 
 	table := termtables.CreateTable()
 	table.AddTitle("AWS Servers")
-	table.AddHeaders("IDX", "LANE", "SERVER", "IP ADDRESS", "ID")
+	table.AddHeaders("IDX", "LANE", "SERVER", "IP ADDRESS", "STATE", "ID")
 
 	for idx, svr := range servers {
-		table.AddRow(idx+1, svr.Lane, svr.Name, svr.IP, svr.ID)
+		table.AddRow(idx+1, svr.Lane, svr.Name, svr.IP, svr.State, svr.ID)
 	}
 
 	fmt.Fprintf(writer, table.Render())
@@ -152,8 +153,9 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 			}
 
 			svr := &Server{
-				ID: *inst.InstanceId,
-				IP: *inst.PublicIpAddress,
+				ID:    *inst.InstanceId,
+				IP:    *inst.PublicIpAddress,
+				State: *inst.State.Name,
 			}
 
 			for _, tag := range inst.Tags {
