@@ -51,11 +51,29 @@ func Execute() (err error) {
 	isInit := strings.Contains(strings.Join(os.Args, " "), " init")
 
 	if !isInit {
-		if Config, err = lanes.LoadConfig(); err != nil {
-			fmt.Println(err.Error())
+		if err = loadConfig(); err != nil {
+			if err != lanes.ErrAbort {
+				fmt.Println(err.Error())
+			}
 			os.Exit(1)
 		}
 	}
 
 	return RootCmd.Execute()
+}
+
+func loadConfig() (err error) {
+	if Config, err = lanes.LoadConfig(); err != nil {
+		// if we fail to load the configuration, attempt to create it
+		if err = lanes.InitConfig(false, false); err != nil {
+			return err
+		} else {
+			// load the newly initialized configuration
+			if Config, err = lanes.LoadConfig(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }

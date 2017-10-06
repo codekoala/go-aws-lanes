@@ -147,3 +147,39 @@ func (this *Config) SetProfile(name string) error {
 func (this *Config) GetCurrentProfile() (prof *Profile, err error) {
 	return LoadProfile(this.Profile)
 }
+
+// InitConfig creates a default configuration for Lanes.
+func InitConfig(noProfile, force bool) (err error) {
+	var cfg *Config
+
+	fmt.Println("Initializing Lanes...")
+	if _, err = os.Stat(CONFIG); err == nil {
+		fmt.Printf("Lanes already appears to be configured! ")
+		if !force {
+			fmt.Println("Aborting.")
+			return ErrAbort
+		} else {
+			fmt.Println("Overwriting existing configuration.")
+		}
+	}
+
+	if cfg, err = LoadConfigBytes([]byte("profile: default")); err != nil {
+		fmt.Printf("Failed to initialize configuration: %s\n", err)
+		return ErrAbort
+	}
+
+	if err = cfg.Write(); err != nil {
+		fmt.Printf("Failed to write configuration: %s\n", err)
+		return ErrAbort
+	}
+
+	if !noProfile {
+		p := GetSampleProfile()
+		if err = p.Write("default"); err != nil {
+			fmt.Printf("Failed to write default profile: %s\n", err)
+			return ErrAbort
+		}
+	}
+
+	return nil
+}

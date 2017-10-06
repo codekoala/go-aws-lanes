@@ -50,10 +50,12 @@ func GetSampleProfile() *Profile {
 
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
 // the named profile.
-func GetProfilePath(name string) string {
+func GetProfilePath(name string, checkPerms bool) string {
 	path := filepath.Join(CONFIG_DIR, name+".yml")
 
-	CheckProfilePermissions(path)
+	if checkPerms {
+		CheckProfilePermissions(path)
+	}
 
 	return path
 }
@@ -122,7 +124,7 @@ func CheckPermissions(path string) (fatal bool, result error) {
 func LoadProfile(name string) (prof *Profile, err error) {
 	var in []byte
 
-	if in, err = ioutil.ReadFile(GetProfilePath(name)); err != nil {
+	if in, err = ioutil.ReadFile(GetProfilePath(name, true)); err != nil {
 		err = fmt.Errorf("unable to read profile: %s", err)
 		return
 	}
@@ -217,7 +219,7 @@ func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesIn
 
 // Write saves the current settings to disk using the specified profile name.
 func (this *Profile) Write(name string) (err error) {
-	return this.WriteFile(name, GetProfilePath(name))
+	return this.WriteFile(name, GetProfilePath(name, false))
 }
 
 // WriteFile saves the current profile settings to the specified file.
