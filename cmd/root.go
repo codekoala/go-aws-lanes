@@ -33,6 +33,7 @@ func init() {
 	fileCmd.AddCommand(filePushCmd)
 	initCmd.AddCommand(initProfileCmd)
 
+	RootCmd.AddCommand(editCmd)
 	RootCmd.AddCommand(fileCmd)
 	RootCmd.AddCommand(initCmd)
 	RootCmd.AddCommand(listCmd)

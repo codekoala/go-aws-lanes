@@ -126,6 +126,21 @@ $ lanes init profile foo ABCD
 Profiles created with this command will include examples for how to configure
 individual lanes.
 
+### Editing Lane Profiles
+
+``lanes`` includes a helper to quickly open the configuration for a specific
+profile in your default editor. Your default editor is determined by the
+`$EDITOR` environment variable. If this variable is not set, ``lanes`` attempts
+to use ``vi``.
+
+```bash
+# edit your current profile using your default editor
+$ lanes edit
+
+# edit the profile called "foo" using your default editor
+$ lanes edit foo
+```
+
 ### Selecting Lane Profiles
 
 When executing ``lanes``, the desired profile is determined first by the
