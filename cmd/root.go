@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/codekoala/go-aws-lanes"
 )
@@ -16,6 +17,8 @@ var (
 	RootCmd = &cobra.Command{
 		Use:   "lanes",
 		Short: "Helper for interacting with sets of AWS EC2 instances",
+
+		BashCompletionFunction: bashCompletionFunc,
 
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.Usage()
@@ -29,9 +32,38 @@ var (
 	svc  *ec2.EC2
 )
 
+const bashCompletionFunc = `
+__lanes_get_profiles() {
+	local out
+	out=$(lanes profiles --batch $1 2>&1)
+	COMPREPLY=( $( compgen -W "${out[*]}" -- "$cur" ) )
+}
+
+__custom_func() {
+	case ${last_command} in
+		lanes_switch)
+			__lanes_get_profiles
+			return
+			;;
+		*)
+			;;
+	esac
+}
+`
+
 func init() {
+	annotation := make(map[string][]string)
+	annotation[cobra.BashCompCustom] = []string{"__lanes_get_profiles"}
+
+	profileFlag := &pflag.Flag{
+		Name:        "profile",
+		Shorthand:   "p",
+		Usage:       "use specific profile (for supported commands)",
+		Annotations: annotation,
+	}
+
 	pfs := RootCmd.PersistentFlags()
-	pfs.StringP("profile", "p", "", "use specific profile (for supported commands)")
+	pfs.AddFlag(profileFlag)
 
 	RootCmd.AddCommand(autoCompleteCmd)
 	RootCmd.AddCommand(editCmd)
@@ -56,7 +88,11 @@ func init() {
 	RootCmd.AddCommand(shCmd)
 
 	RootCmd.AddCommand(sshCmd)
+
+	switchCmd.Annotations = make(map[string]string)
+	switchCmd.Annotations[cobra.BashCompCustom] = "__lanes_get_profiles"
 	RootCmd.AddCommand(switchCmd)
+
 	RootCmd.AddCommand(versionCmd)
 }
 
