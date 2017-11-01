@@ -86,8 +86,16 @@ func DisplayServers(servers []*Server) error {
 }
 
 func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
+	return DisplayServersColsWriter(writer, servers, DefaultColumns)
+}
+
+func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns []Column) (err error) {
 	if len(servers) == 0 {
 		return fmt.Errorf("No servers found.")
+	}
+
+	if len(columns) == 0 {
+		return nil
 	}
 
 	if !config.DisableUTF8 {
@@ -96,10 +104,38 @@ func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 
 	table := termtables.CreateTable()
 	table.AddTitle("AWS Servers")
-	table.AddHeaders("IDX", "LANE", "SERVER", "IP ADDRESS", "STATE", "ID")
 
 	for idx, svr := range servers {
-		table.AddRow(idx+1, svr.Lane, svr.Name, svr.IP, svr.State, svr.ID)
+		row := table.AddRow()
+
+		for _, col := range columns {
+			switch col {
+			case ColumnIndex:
+				row.AddCell(idx + 1)
+			case ColumnLane:
+				row.AddCell(svr.Lane)
+			case ColumnServer:
+				row.AddCell(svr.Name)
+			case ColumnIP:
+				row.AddCell(svr.IP)
+			case ColumnState:
+				row.AddCell(svr.State)
+			case ColumnID:
+				row.AddCell(svr.ID)
+			default:
+				continue
+			}
+		}
+	}
+
+	// add headers after all rows because cell alignment only applies to cells that exist when SetAlign is called
+	for idx, col := range columns {
+		table.AddHeaders(col)
+
+		switch col {
+		case ColumnIndex:
+			table.SetAlign(termtables.AlignRight, idx+1)
+		}
 	}
 
 	fmt.Fprintf(writer, table.Render())
