@@ -28,14 +28,14 @@ var shCmd = &cobra.Command{
 		confirmed, _ := cmd.Flags().GetBool("confirm")
 
 		if servers, err = DisplayLaneAndConfirm(lane, prompt, confirmed); err != nil {
-			fmt.Println(err.Error())
+			cmd.Println(err.Error())
 			os.Exit(1)
 		}
 
 		for _, svr := range servers {
-			fmt.Printf("=====\nExecuting on %s (%s):\t%s\n", svr.Name, svr.IP, shCmd)
+			cmd.Printf("=====\nExecuting on %s (%s):  %s\n", svr.Name, svr.IP, shCmd)
 			if err = ConnectToServer(svr, shCmd); err != nil {
-				fmt.Printf("SSH error: %s\n", err)
+				cmd.Printf("SSH error: %s\n", err)
 				os.Exit(1)
 			}
 		}
