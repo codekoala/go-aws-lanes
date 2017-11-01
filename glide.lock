@@ -1,12 +1,12 @@
-hash: 2770d8e60e84b3a5b782b52e6dbd952e55e1058a9e7e6e8c147420e91bb69229
-updated: 2017-09-18T15:39:29.215184061-04:00
+hash: 0b210a7b7099359df378e3b6ab72aeadf4a6b24b8e60f125789c180f42cd4d5f
+updated: 2017-10-31T23:21:04.363061497-04:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
   subpackages:
   - term
 - name: github.com/aws/aws-sdk-go
-  version: 88849eea79e8e48241987b1f0a11a7a0dcbb7716
+  version: ee1f179877b2daf2aaabf71fa900773bf8842253
   subpackages:
   - aws
   - aws/awserr
@@ -39,6 +39,8 @@ imports:
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
 - name: github.com/go-ini/ini
   version: e7fea39b01aea8d5671f6858f0532f56e8bff3a5
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
 - name: github.com/hashicorp/go-multierror
   version: ed905158d87462226a13fe39ddf685ea65f1c11f
 - name: github.com/inconshreveable/mousetrap
@@ -54,6 +56,8 @@ imports:
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
   repo: https://github.com/mattn/go-runewidth
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/spf13/cobra
   version: b26b538f693051ac6518e65672de3144ce3fbedc
   subpackages:

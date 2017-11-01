@@ -2,6 +2,8 @@ package ssh
 
 import (
 	"fmt"
+
+	"github.com/mitchellh/go-homedir"
 )
 
 type Config struct {
@@ -24,11 +26,12 @@ func (this *Profile) UserAt(addr string) string {
 }
 
 func (this *Profile) SSHArgs(addr string) (args []string) {
-	args = append(args, this.UserAt(addr))
-
 	if this.Identity != "" {
+		this.Identity, _ = homedir.Expand(this.Identity)
 		args = append(args, "-i", this.Identity)
 	}
+
+	args = append(args, this.UserAt(addr))
 
 	if this.Tunnel != "" {
 		args = append(args, "-L", this.Tunnel)
