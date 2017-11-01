@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 
 	"github.com/codekoala/go-aws-lanes"
 )
@@ -55,15 +54,11 @@ func init() {
 	annotation := make(map[string][]string)
 	annotation[cobra.BashCompCustom] = []string{"__lanes_get_profiles"}
 
-	profileFlag := &pflag.Flag{
-		Name:        "profile",
-		Shorthand:   "p",
-		Usage:       "use specific profile (for supported commands)",
-		Annotations: annotation,
-	}
-
 	pfs := RootCmd.PersistentFlags()
-	pfs.AddFlag(profileFlag)
+	pfs.StringP("profile", "p", "", "use specific profile (for supported commands)")
+
+	profileFlag := pfs.Lookup("profile")
+	profileFlag.Annotations = annotation
 
 	RootCmd.AddCommand(autoCompleteCmd)
 	RootCmd.AddCommand(editCmd)
