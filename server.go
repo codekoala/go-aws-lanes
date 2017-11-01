@@ -85,15 +85,15 @@ func DisplayServers(servers []*Server) error {
 	return DisplayServersWriter(os.Stdout, servers)
 }
 
-func DisplayServersCols(servers []*Server, columns []Column) error {
+func DisplayServersCols(servers []*Server, columns ColumnSet) error {
 	return DisplayServersColsWriter(os.Stdout, servers, columns)
 }
 
 func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
-	return DisplayServersColsWriter(writer, servers, DefaultColumns)
+	return DisplayServersColsWriter(writer, servers, DefaultColumnSet)
 }
 
-func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns []Column) (err error) {
+func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns ColumnSet) (err error) {
 	if len(servers) == 0 {
 		return fmt.Errorf("No servers found.")
 	}
@@ -110,6 +110,7 @@ func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns []Col
 	if config.Table.HideBorders {
 		table.Style.SkipBorder = true
 		table.Style.BorderY = ""
+		table.Style.PaddingLeft = 0
 	}
 
 	if !config.Table.HideTitle {

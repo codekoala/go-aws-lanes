@@ -5,6 +5,7 @@ import (
 )
 
 type Column string
+type ColumnSet []Column
 
 const (
 	ColumnIndex   Column = "IDX"
@@ -16,7 +17,7 @@ const (
 	ColumnInvalid        = ""
 )
 
-var DefaultColumns = []Column{
+var DefaultColumnSet = ColumnSet{
 	ColumnIndex,
 	ColumnLane,
 	ColumnServer,
@@ -25,7 +26,7 @@ var DefaultColumns = []Column{
 	ColumnID,
 }
 
-func ParseColumnList(columns string) (out []Column) {
+func ParseColumnSet(columns string) (out ColumnSet) {
 	for _, cn := range strings.Split(columns, ",") {
 		col := ColumnFromName(cn)
 		if col == ColumnInvalid {
@@ -59,9 +60,36 @@ func ColumnFromName(name string) (c Column) {
 	return c
 }
 
-func GetColumnList(columns ...Column) string {
+func GetDefaultColumnList() string {
+	return DefaultColumnSet.String()
+}
+
+func (this ColumnSet) Add(columns ...Column) {
+	this = append(this, columns...)
+}
+
+func (this ColumnSet) Remove(columns ...Column) (sanitized ColumnSet) {
+	for _, col := range this {
+		show := true
+		for _, rem := range columns {
+			if col == rem {
+				show = false
+				break
+			}
+		}
+
+		if show {
+			sanitized = append(sanitized, col)
+		}
+	}
+
+	return sanitized
+}
+
+func (this ColumnSet) String() string {
 	var names []string
-	for _, col := range columns {
+
+	for _, col := range this {
 		var name string
 		switch col {
 		case ColumnIP:
@@ -74,8 +102,4 @@ func GetColumnList(columns ...Column) string {
 	}
 
 	return strings.Join(names, ",")
-}
-
-func GetDefaultColumnList() string {
-	return GetColumnList(DefaultColumns...)
 }

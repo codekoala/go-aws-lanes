@@ -14,6 +14,7 @@ func init() {
 		"columns", "c",
 		lanes.GetDefaultColumnList(),
 		"Comma-separated list of columns to display")
+	listCmd.Flags().String("hide", "", "Comma-separated list of columns to hide")
 }
 
 var listCmd = &cobra.Command{
@@ -35,16 +36,22 @@ var listCmd = &cobra.Command{
 		}
 
 		columns, _ := cmd.Flags().GetString("columns")
-		parsedColumns := lanes.ParseColumnList(columns)
+		if columns == "" {
+			columns = lanes.GetDefaultColumnList()
+		}
+
+		parsedColumns := lanes.ParseColumnSet(columns)
 		if len(parsedColumns) == 0 {
 			return fmt.Errorf("invalid columns specified")
 		}
 
+		if hideColumns, _ := cmd.Flags().GetString("hide"); hideColumns != "" {
+			hiddenCols := lanes.ParseColumnSet(hideColumns)
+			parsedColumns = parsedColumns.Remove(hiddenCols...)
+		}
+
 		if batch, _ := cmd.Flags().GetBool("batch"); batch {
-			config := lanes.GetConfig()
-			config.Table.HideTitle = true
-			config.Table.HideHeaders = true
-			config.Table.HideBorders = true
+			lanes.GetConfig().Table.ToggleBatchMode(true)
 		}
 
 		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {

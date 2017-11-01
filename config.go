@@ -44,7 +44,7 @@ type Config struct {
 	Tags TagNames `yaml:"tags,omitempty"`
 
 	// Table allows the table of servers to be customized
-	Table TableConfig `yaml:"table,omitempty"`
+	Table *TableConfig `yaml:"table,omitempty"`
 }
 
 type TableConfig struct {
@@ -56,6 +56,12 @@ type TableConfig struct {
 
 	// HideBorders makes it so the table of servers has no border
 	HideBorders bool `yaml:"hide_borders,omitempty"`
+}
+
+func (this *TableConfig) ToggleBatchMode(batch bool) {
+	this.HideTitle = batch
+	this.HideHeaders = batch
+	this.HideBorders = batch
 }
 
 type TagNames struct {
@@ -85,7 +91,9 @@ func LoadConfigFile(cfgPath string) (c *Config, err error) {
 
 // LoadConfigBytes unmarshals YAML input and returns a *Config with any environment variables taking precedence.
 func LoadConfigBytes(in []byte) (c *Config, err error) {
-	c = new(Config)
+	c = &Config{
+		Table: &TableConfig{},
+	}
 
 	if err = yaml.Unmarshal(in, c); err != nil {
 		err = fmt.Errorf("unable to parse configuration: %s", err)
