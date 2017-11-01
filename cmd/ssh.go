@@ -27,7 +27,8 @@ var sshCmd = &cobra.Command{
 			lane = args[0]
 		}
 
-		if svr, err = ChooseServer(lane); err != nil {
+		filter, _ := cmd.Flags().GetString("filter")
+		if svr, err = ChooseServer(lane, filter); err != nil {
 			cmd.Println(err.Error())
 			os.Exit(1)
 		}

@@ -174,14 +174,18 @@ func CreateLaneFilter(lane string) (input *ec2.DescribeInstancesInput) {
 }
 
 func FetchServers(svc *ec2.EC2) ([]*Server, error) {
-	return FetchServersBy(svc, nil)
+	return FetchServersBy(svc, nil, "")
 }
 
 func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
-	return FetchServersBy(svc, CreateLaneFilter(lane))
+	return FetchServersInLaneByKeyword(svc, lane, "")
 }
 
-func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []*Server, err error) {
+func FetchServersInLaneByKeyword(svc *ec2.EC2, lane, keyword string) ([]*Server, error) {
+	return FetchServersBy(svc, CreateLaneFilter(lane), keyword)
+}
+
+func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword string) (servers []*Server, err error) {
 	var out *ec2.DescribeInstancesOutput
 
 	fmt.Fprintf(os.Stderr, "Fetching servers... ")
@@ -222,6 +226,11 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 				}
 			}
 
+			// filter servers by keyword
+			if !svr.Matches(keyword) {
+				continue
+			}
+
 			servers = append(servers, svr)
 		}
 	}
@@ -231,4 +240,17 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []
 	})
 
 	return servers, nil
+}
+
+func (this *Server) Matches(keyword string) bool {
+	if keyword == "" {
+		return true
+	}
+
+	keyword = strings.ToUpper(keyword)
+
+	return (strings.Contains(strings.ToUpper(this.Name), keyword) ||
+		strings.Contains(strings.ToUpper(this.ID), keyword) ||
+		strings.Contains(strings.ToUpper(this.Lane), keyword) ||
+		strings.Contains(this.IP, keyword))
 }

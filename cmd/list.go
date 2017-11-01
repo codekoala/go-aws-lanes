@@ -29,13 +29,15 @@ var listCmd = &cobra.Command{
 		var (
 			lane    string
 			servers []*lanes.Server
+
+			fl = cmd.Flags()
 		)
 
 		if len(args) > 0 {
 			lane = args[0]
 		}
 
-		columns, _ := cmd.Flags().GetString("columns")
+		columns, _ := fl.GetString("columns")
 		if columns == "" {
 			columns = lanes.GetDefaultColumnList()
 		}
@@ -45,16 +47,17 @@ var listCmd = &cobra.Command{
 			return fmt.Errorf("invalid columns specified")
 		}
 
-		if hideColumns, _ := cmd.Flags().GetString("hide"); hideColumns != "" {
+		if hideColumns, _ := fl.GetString("hide"); hideColumns != "" {
 			hiddenCols := lanes.ParseColumnSet(hideColumns)
 			parsedColumns = parsedColumns.Remove(hiddenCols...)
 		}
 
-		if batch, _ := cmd.Flags().GetBool("batch"); batch {
+		if batch, _ := fl.GetBool("batch"); batch {
 			lanes.GetConfig().Table.ToggleBatchMode(true)
 		}
 
-		if servers, err = lanes.FetchServersInLane(svc, lane); err != nil {
+		filter, _ := fl.GetString("filter")
+		if servers, err = lanes.FetchServersInLaneByKeyword(svc, lane, filter); err != nil {
 			return fmt.Errorf("failed to fetch servers: %s\n", err)
 		}
 

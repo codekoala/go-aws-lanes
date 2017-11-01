@@ -20,14 +20,17 @@ var shCmd = &cobra.Command{
 		var (
 			servers []*lanes.Server
 			err     error
+
+			fl = cmd.Flags()
 		)
 
-		lane := cmd.Flags().Arg(0)
-		shCmd := cmd.Flags().Arg(1)
+		lane := fl.Arg(0)
+		shCmd := fl.Arg(1)
 		prompt := fmt.Sprintf("\nType CONFIRM to execute %q on these machines:", shCmd)
-		confirmed, _ := cmd.Flags().GetBool("confirm")
+		confirmed, _ := fl.GetBool("confirm")
 
-		if servers, err = DisplayLaneAndConfirm(lane, prompt, confirmed); err != nil {
+		filter, _ := fl.GetString("filter")
+		if servers, err = DisplayFilteredLaneAndConfirm(lane, filter, prompt, confirmed); err != nil {
 			cmd.Println(err.Error())
 			os.Exit(1)
 		}

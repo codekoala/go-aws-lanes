@@ -208,20 +208,25 @@ func (this *Profile) Deactivate() {
 
 // FetchServers retrieves all EC2 instances for the current profile.
 func (this *Profile) FetchServers(svc *ec2.EC2) ([]*Server, error) {
-	return this.FetchServersBy(svc, nil)
+	return this.FetchServersBy(svc, nil, "")
 }
 
 // FetchServersInLane retrieves all EC2 instances in the specified lane for the current profile.
 func (this *Profile) FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
-	return this.FetchServersBy(svc, CreateLaneFilter(lane))
+	return this.FetchServersInLaneByKeyword(svc, lane, "")
+}
+
+// FetchServersInLane retrieves all EC2 instances in the specified lane for the current profile.
+func (this *Profile) FetchServersInLaneByKeyword(svc *ec2.EC2, lane, keyword string) ([]*Server, error) {
+	return this.FetchServersBy(svc, CreateLaneFilter(lane), keyword)
 }
 
 // FetchServersBy retrieves all EC2 instances for the current profile using any specified filters. Each instance is
 // automatically tagged with the appropriate SSH profile to access it.
-func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []*Server, err error) {
+func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword string) (servers []*Server, err error) {
 	var exists bool
 
-	if servers, err = FetchServersBy(svc, input); err != nil {
+	if servers, err = FetchServersBy(svc, input, keyword); err != nil {
 		return
 	}
 

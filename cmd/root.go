@@ -74,14 +74,18 @@ func init() {
 
 	RootCmd.AddCommand(initCmd)
 
+	listCmd.Flags().StringP("filter", "f", "", "Filter servers by keyword")
+	filterFlag := listCmd.Flags().Lookup("filter")
 	RootCmd.AddCommand(listCmd)
 
 	profilesCmd.Flags().BoolP("batch", "b", false, "Batch mode")
 	RootCmd.AddCommand(profilesCmd)
 
 	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
+	shCmd.Flags().AddFlag(filterFlag)
 	RootCmd.AddCommand(shCmd)
 
+	sshCmd.Flags().AddFlag(filterFlag)
 	RootCmd.AddCommand(sshCmd)
 
 	switchCmd.Annotations = make(map[string]string)

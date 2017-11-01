@@ -52,7 +52,13 @@ func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 // DisplayLaneAndConfirm displays a table of all instances in the specified lane and requires the user to confirm their
 // intentions before allowing the calling operation to continue.
 func DisplayLaneAndConfirm(lane, prompt string, confirm bool) (servers []*lanes.Server, err error) {
-	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
+	return DisplayFilteredLaneAndConfirm(lane, "", prompt, confirm)
+}
+
+// DisplayFilteredLaneAndConfirm displays a table of instances in the specified lane that match the specified keyword
+// and requires the user to confirm their intentions before allowing the calling operation to continue.
+func DisplayFilteredLaneAndConfirm(lane, keyword, prompt string, confirm bool) (servers []*lanes.Server, err error) {
+	if servers, err = profile.FetchServersInLaneByKeyword(svc, lane, keyword); err != nil {
 		err = fmt.Errorf("failed to fetch servers: %s", err)
 		return
 	}
@@ -152,14 +158,14 @@ Cancel:
 
 // ChooseServer displays a table of all instances in the specified lane and prompts the user to select one server
 // before proceeding with the calling operation.
-func ChooseServer(lane string) (svr *lanes.Server, err error) {
+func ChooseServer(lane, keyword string) (svr *lanes.Server, err error) {
 	var (
 		servers   []*lanes.Server
 		selection *lanes.Server
 		idx       int
 	)
 
-	if servers, err = profile.FetchServersInLane(svc, lane); err != nil {
+	if servers, err = profile.FetchServersInLaneByKeyword(svc, lane, keyword); err != nil {
 		err = fmt.Errorf("failed to fetch servers: %s", err)
 		return
 	}
