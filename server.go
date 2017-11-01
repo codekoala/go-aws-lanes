@@ -85,6 +85,10 @@ func DisplayServers(servers []*Server) error {
 	return DisplayServersWriter(os.Stdout, servers)
 }
 
+func DisplayServersCols(servers []*Server, columns []Column) error {
+	return DisplayServersColsWriter(os.Stdout, servers, columns)
+}
+
 func DisplayServersWriter(writer io.Writer, servers []*Server) (err error) {
 	return DisplayServersColsWriter(writer, servers, DefaultColumns)
 }
@@ -103,7 +107,14 @@ func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns []Col
 	}
 
 	table := termtables.CreateTable()
-	table.AddTitle("AWS Servers")
+	if config.Table.HideBorders {
+		table.Style.SkipBorder = true
+		table.Style.BorderY = ""
+	}
+
+	if !config.Table.HideTitle {
+		table.AddTitle("AWS Servers")
+	}
 
 	for idx, svr := range servers {
 		row := table.AddRow()
@@ -128,13 +139,15 @@ func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns []Col
 		}
 	}
 
-	// add headers after all rows because cell alignment only applies to cells that exist when SetAlign is called
-	for idx, col := range columns {
-		table.AddHeaders(col)
+	if !config.Table.HideHeaders {
+		// add headers after all rows because cell alignment only applies to cells that exist when SetAlign is called
+		for idx, col := range columns {
+			table.AddHeaders(col)
 
-		switch col {
-		case ColumnIndex:
-			table.SetAlign(termtables.AlignRight, idx+1)
+			switch col {
+			case ColumnIndex:
+				table.SetAlign(termtables.AlignRight, idx+1)
+			}
 		}
 	}
 
@@ -170,12 +183,13 @@ func FetchServersInLane(svc *ec2.EC2, lane string) ([]*Server, error) {
 func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput) (servers []*Server, err error) {
 	var out *ec2.DescribeInstancesOutput
 
-	fmt.Printf("Fetching servers... ")
+	fmt.Fprintf(os.Stderr, "Fetching servers... ")
 	spin := spinner.New(spinner.CharSets[21], 50*time.Millisecond)
+	spin.Writer = os.Stderr
 	spin.Start()
 	defer func() {
 		spin.Stop()
-		fmt.Println("done")
+		fmt.Fprintln(os.Stderr, "done")
 	}()
 
 	if out, err = svc.DescribeInstances(input); err != nil {

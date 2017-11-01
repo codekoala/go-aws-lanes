@@ -30,9 +30,9 @@ func RequireProfile(cmd *cobra.Command, args []string) (err error) {
 		Config.Profile = profileName
 	}
 
-	fmt.Printf("Current profile: %s\n", Config.Profile)
+	fmt.Fprintf(os.Stderr, "Current profile: %s\n", Config.Profile)
 	if profile, err = Config.GetCurrentProfile(); err != nil || profile == nil {
-		fmt.Printf("Error: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		os.Exit(1)
 	}
 

@@ -42,6 +42,20 @@ type Config struct {
 
 	// Tags includes the names of interesting tags for EC2 instances.
 	Tags TagNames `yaml:"tags,omitempty"`
+
+	// Table allows the table of servers to be customized
+	Table TableConfig `yaml:"table,omitempty"`
+}
+
+type TableConfig struct {
+	// HideTitle makes it so the "AWS Servers" title is not shown in the table of servers
+	HideTitle bool `yaml:"hide_title,omitempty"`
+
+	// HideHeaders makes it so the name of each column is not shown in the table of servers
+	HideHeaders bool `yaml:"hide_headers,omitempty"`
+
+	// HideBorders makes it so the table of servers has no border
+	HideBorders bool `yaml:"hide_borders,omitempty"`
 }
 
 type TagNames struct {
@@ -182,4 +196,8 @@ func InitConfig(noProfile, force bool) (err error) {
 	}
 
 	return nil
+}
+
+func GetConfig() *Config {
+	return config
 }
