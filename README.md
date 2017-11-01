@@ -186,10 +186,10 @@ $ lanes list prod
 $ lanes ls prod
 ```
 
-The `list`/`ls` command has a `--batch`/`-b` option to disable table headers
-and borders for easier use with batch operations. It is also possible to show
-specific columns with the `--columns`/`-c` option. Alternatively, specific
-columns may be hidden using the `--hide` option.
+As of version 0.3.0, the `list`/`ls` command has a `--batch`/`-b` option to
+disable table headers and borders for easier use with batch operations. It is
+also possible to show specific columns with the `--columns`/`-c` option.
+Alternatively, specific columns may be hidden using the `--hide` option.
 
 ### SSH Into Instance
 
