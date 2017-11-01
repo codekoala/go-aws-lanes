@@ -6,8 +6,13 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
+var DefaultProfile = Profile{
+	User: "ec2-user",
+}
+
 type Config struct {
-	Mods map[string]*Profile `yaml:"mods"`
+	Default *Profile            `yaml:"default"`
+	Mods    map[string]*Profile `yaml:"mods"`
 }
 
 type Profile struct {
@@ -19,7 +24,7 @@ type Profile struct {
 
 func (this *Profile) UserAt(addr string) string {
 	if this.User == "" {
-		this.User = "ec2-user"
+		this.User = DefaultProfile.User
 	}
 
 	return fmt.Sprintf("%s@%s", this.User, addr)
@@ -33,13 +38,19 @@ func (this *Profile) SSHArgs(addr string) (args []string) {
 
 	args = append(args, this.UserAt(addr))
 
-	if this.Tunnel != "" {
-		args = append(args, "-L", this.Tunnel)
-	}
-
-	for _, t := range this.Tunnels {
+	for _, t := range this.AllTunnels() {
 		args = append(args, "-L", t)
 	}
 
 	return args
+}
+
+func (this *Profile) AllTunnels() []string {
+	all := this.Tunnels[:]
+
+	if this.Tunnel != "" {
+		all = append(all, this.Tunnel)
+	}
+
+	return all
 }

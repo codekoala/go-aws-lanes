@@ -29,6 +29,7 @@ type Profile struct {
 func GetSampleProfile() *Profile {
 	return &Profile{
 		SSH: ssh.Config{
+			Default: &ssh.DefaultProfile,
 			Mods: map[string]*ssh.Profile{
 				"dev": {
 					Identity: "~/.ssh/id_rsa_dev",
@@ -232,7 +233,11 @@ func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesIn
 
 	for _, svr := range servers {
 		if svr.profile, exists = this.SSH.Mods[svr.Lane]; !exists {
-			fmt.Printf("WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
+			fmt.Fprintf(os.Stderr, "WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
+			svr.profile = this.SSH.Default
+			if svr.profile == nil {
+				svr.profile = &ssh.DefaultProfile
+			}
 		}
 	}
 
