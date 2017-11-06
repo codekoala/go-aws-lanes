@@ -208,6 +208,9 @@ print $4":\n \
 "}' > /etc/salt/roster
 ```
 
+As of version 0.3.2, the `list`/`ls` command also supports dumping the server
+table in CSV format using the `--csv` argument.
+
 ### SSH Into Instance
 
 Examples:

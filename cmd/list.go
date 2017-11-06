@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
 	"os"
 
@@ -12,6 +13,7 @@ import (
 
 func init() {
 	listCmd.Flags().BoolP("batch", "b", false, "Batch mode (hide table headers and borders)")
+	listCmd.Flags().Bool("csv", false, "Output table as CSV")
 	listCmd.Flags().StringP(
 		"columns", "c",
 		lanes.GetDefaultColumnList(),
@@ -66,6 +68,20 @@ var listCmd = &cobra.Command{
 			return fmt.Errorf("failed to fetch servers: %s\n", err)
 		}
 
-		return lanes.DisplayServersCols(servers, parsedColumns)
+		if asCsv, _ := fl.GetBool("csv"); asCsv {
+			w := csv.NewWriter(os.Stdout)
+			if err = lanes.DisplayServersCSVWriter(w, servers, parsedColumns); err != nil {
+				return
+			}
+
+			w.Flush()
+			if err = w.Error(); err != nil {
+				return
+			}
+		} else {
+			err = lanes.DisplayServersCols(servers, parsedColumns)
+		}
+
+		return err
 	},
 }
