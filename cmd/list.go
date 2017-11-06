@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/mattn/go-isatty"
 	"github.com/spf13/cobra"
 
 	"github.com/codekoala/go-aws-lanes"
@@ -52,7 +54,10 @@ var listCmd = &cobra.Command{
 			parsedColumns = parsedColumns.Remove(hiddenCols...)
 		}
 
-		if batch, _ := fl.GetBool("batch"); batch {
+		batch, _ := fl.GetBool("batch")
+		batch = batch || !isatty.IsTerminal(os.Stdout.Fd())
+
+		if batch {
 			lanes.GetConfig().Table.ToggleBatchMode(true)
 		}
 

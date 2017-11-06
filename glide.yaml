@@ -20,3 +20,5 @@ import:
   - ssh/terminal
 - package: github.com/hashicorp/go-multierror
 - package: github.com/mitchellh/go-homedir
+- package: github.com/mattn/go-isatty
+  version: ^0.0.3

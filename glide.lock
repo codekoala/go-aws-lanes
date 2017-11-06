@@ -1,12 +1,12 @@
-hash: 0b210a7b7099359df378e3b6ab72aeadf4a6b24b8e60f125789c180f42cd4d5f
-updated: 2017-10-31T23:21:04.363061497-04:00
+hash: 1bb461bb51f03c0135b1f6773b165ca2bfabacecd3befc99cfda7eebc492920f
+updated: 2017-11-06T15:09:00.373613767-05:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
   subpackages:
   - term
 - name: github.com/aws/aws-sdk-go
-  version: ee1f179877b2daf2aaabf71fa900773bf8842253
+  version: d46843b92a3a8e377d7fe24b4d70fca37f923d00
   subpackages:
   - aws
   - aws/awserr
@@ -51,8 +51,7 @@ imports:
   version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
 - name: github.com/mattn/go-isatty
-  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
-  repo: https://github.com/mattn/go-isatty
+  version: 0360b2af4f38e8d38c7fce2a9f4e702702d73a39
 - name: github.com/mattn/go-runewidth
   version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
   repo: https://github.com/mattn/go-runewidth
