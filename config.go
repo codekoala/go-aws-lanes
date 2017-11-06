@@ -45,6 +45,9 @@ type Config struct {
 
 	// Table allows the table of servers to be customized
 	Table *TableConfig `yaml:"table,omitempty"`
+
+	// profile is the actual profile to pull information from.
+	profile *Profile
 }
 
 type TableConfig struct {
@@ -167,7 +170,11 @@ func (this *Config) SetProfile(name string) error {
 
 // GetCurrentProfile loads the currently configured lane profile from the filesystem.
 func (this *Config) GetCurrentProfile() (prof *Profile, err error) {
-	return LoadProfile(this.Profile)
+	if this.profile == nil {
+		this.profile, err = LoadProfile(this.Profile)
+	}
+
+	return this.profile, err
 }
 
 // InitConfig creates a default configuration for Lanes.

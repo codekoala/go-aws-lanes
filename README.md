@@ -191,6 +191,23 @@ disable table headers and borders for easier use with batch operations. It is
 also possible to show specific columns with the `--columns`/`-c` option.
 Alternatively, specific columns may be hidden using the `--hide` option.
 
+Using the `list` command in batch mode can be helpful when writing other
+scripts to interact with your AWS EC2 instances. For example, here's a
+one-liner to produce a roster for `salt-ssh`:
+
+```bash
+$ lanes ls -c SSH_IDENTITY,USER,IP,NAME | \
+    sed "s,~,$HOME,g" | \
+    awk '/\.pem/ { \
+print $4":\n \
+  host: "$3"\n \
+  user: "$2"\n \
+  sudo: true\n \
+  tty: true\n \
+  priv: "$1"\n \
+"}' > /etc/salt/roster
+```
+
 ### SSH Into Instance
 
 Examples:

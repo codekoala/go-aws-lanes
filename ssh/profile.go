@@ -22,12 +22,16 @@ type Profile struct {
 	Tunnels  []string `yaml:"tunnels,omitempty"`
 }
 
-func (this *Profile) UserAt(addr string) string {
+func (this *Profile) GetUser() string {
 	if this.User == "" {
 		this.User = DefaultProfile.User
 	}
 
-	return fmt.Sprintf("%s@%s", this.User, addr)
+	return this.User
+}
+
+func (this *Profile) UserAt(addr string) string {
+	return fmt.Sprintf("%s@%s", this.GetUser(), addr)
 }
 
 func (this *Profile) SSHArgs(addr string) (args []string) {

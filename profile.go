@@ -225,20 +225,8 @@ func (this *Profile) FetchServersInLaneByKeyword(svc *ec2.EC2, lane, keyword str
 // FetchServersBy retrieves all EC2 instances for the current profile using any specified filters. Each instance is
 // automatically tagged with the appropriate SSH profile to access it.
 func (this *Profile) FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword string) (servers []*Server, err error) {
-	var exists bool
-
 	if servers, err = FetchServersBy(svc, input, keyword); err != nil {
 		return
-	}
-
-	for _, svr := range servers {
-		if svr.profile, exists = this.SSH.Mods[svr.Lane]; !exists {
-			fmt.Fprintf(os.Stderr, "WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
-			svr.profile = this.SSH.Default
-			if svr.profile == nil {
-				svr.profile = &ssh.DefaultProfile
-			}
-		}
 	}
 
 	return servers, nil

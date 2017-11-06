@@ -8,13 +8,15 @@ type Column string
 type ColumnSet []Column
 
 const (
-	ColumnIndex   Column = "IDX"
-	ColumnLane           = "LANE"
-	ColumnServer         = "SERVER"
-	ColumnIP             = "IP ADDRESS"
-	ColumnState          = "STATE"
-	ColumnID             = "ID"
-	ColumnInvalid        = ""
+	ColumnIndex       Column = "IDX"
+	ColumnLane               = "LANE"
+	ColumnServer             = "SERVER"
+	ColumnIP                 = "IP ADDRESS"
+	ColumnState              = "STATE"
+	ColumnID                 = "ID"
+	ColumnSSHIdentity        = "SSH_IDENTITY"
+	ColumnUser               = "USER"
+	ColumnInvalid            = ""
 )
 
 var DefaultColumnSet = ColumnSet{
@@ -53,6 +55,10 @@ func ColumnFromName(name string) (c Column) {
 		c = ColumnState
 	case string(ColumnID):
 		c = ColumnID
+	case string(ColumnSSHIdentity):
+		c = ColumnSSHIdentity
+	case string(ColumnUser):
+		c = ColumnUser
 	default:
 		c = ColumnInvalid
 	}

@@ -134,6 +134,10 @@ func DisplayServersColsWriter(writer io.Writer, servers []*Server, columns Colum
 				row.AddCell(svr.State)
 			case ColumnID:
 				row.AddCell(svr.ID)
+			case ColumnSSHIdentity:
+				row.AddCell(svr.profile.Identity)
+			case ColumnUser:
+				row.AddCell(svr.profile.GetUser())
 			default:
 				continue
 			}
@@ -186,7 +190,10 @@ func FetchServersInLaneByKeyword(svc *ec2.EC2, lane, keyword string) ([]*Server,
 }
 
 func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword string) (servers []*Server, err error) {
-	var out *ec2.DescribeInstancesOutput
+	var (
+		out    *ec2.DescribeInstancesOutput
+		exists bool
+	)
 
 	fmt.Fprintf(os.Stderr, "Fetching servers... ")
 	spin := spinner.New(spinner.CharSets[21], 50*time.Millisecond)
@@ -229,6 +236,17 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword str
 			// filter servers by keyword
 			if !svr.Matches(keyword) {
 				continue
+			}
+
+			if config.profile != nil {
+				// assign appropriate profile to server
+				if svr.profile, exists = config.profile.SSH.Mods[svr.Lane]; !exists {
+					fmt.Fprintf(os.Stderr, "WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
+					svr.profile = config.profile.SSH.Default
+					if svr.profile == nil {
+						svr.profile = &ssh.DefaultProfile
+					}
+				}
 			}
 
 			servers = append(servers, svr)
