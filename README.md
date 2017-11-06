@@ -73,7 +73,7 @@ user acceptance testing, and one called "prod" for production servers.
 For example:
 
 ```shell
-$ curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.3.0/lanes_linux_amd64
+$ curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.3.1/lanes_linux_amd64
 $ chmod +x /tmp/lanes
 $ sudo mv /tmp/lanes /usr/local/bin/lanes
 ```
