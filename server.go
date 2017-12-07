@@ -1,6 +1,7 @@
 package lanes
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -26,24 +27,33 @@ type Server struct {
 }
 
 // Login attempts to SSH into the server using the default profile.
-func (this *Server) Login(args []string) error {
+func (this *Server) Login(ctx context.Context, args []string) error {
 	if this.profile == nil {
 		return ErrMissingSSHProfile
 	}
 
-	return this.LoginWithProfile(this.profile, args)
+	return this.LoginWithProfile(ctx, this.profile, args)
 }
 
 // LoginWithProfile attempts to SSH into the server using a custom profile.
-func (this *Server) LoginWithProfile(profile *ssh.Profile, args []string) error {
+func (this *Server) LoginWithProfile(ctx context.Context, profile *ssh.Profile, args []string) error {
+	return this.GetSSHCommandWithProfile(ctx, profile, args).Run()
+}
+
+func (this *Server) GetSSHCommand(ctx context.Context, args []string) *exec.Cmd {
+	return this.GetSSHCommandWithProfile(ctx, this.profile, args)
+}
+
+// GetSSHCommandWithProfile sets up a command to SSH into the server using a custom profile.
+func (this *Server) GetSSHCommandWithProfile(ctx context.Context, profile *ssh.Profile, args []string) *exec.Cmd {
 	sshArgs := append(profile.SSHArgs(this.IP), args...)
 
-	cmd := exec.Command("ssh", sshArgs...)
+	cmd := exec.CommandContext(ctx, "ssh", sshArgs...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
-	return cmd.Run()
+	return cmd
 }
 
 // Push attempts to copy files to the server using the default profile.

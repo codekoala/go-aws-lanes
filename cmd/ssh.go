@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -43,7 +44,7 @@ var sshCmd = &cobra.Command{
 // ConnectToServer uses the specified server's lane to correctly connect to the desired server.
 func ConnectToServer(svr *lanes.Server, args ...string) (err error) {
 	fmt.Printf("Connecting to server %s...\n", svr)
-	if err = svr.Login(args); err != nil {
+	if err = svr.Login(context.Background(), args); err != nil {
 		return fmt.Errorf("connection error: %s", err)
 	}
 

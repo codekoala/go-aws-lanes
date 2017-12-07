@@ -81,7 +81,6 @@ func init() {
 	profilesCmd.Flags().BoolP("batch", "b", false, "Batch mode")
 	RootCmd.AddCommand(profilesCmd)
 
-	shCmd.Flags().BoolP("confirm", "c", false, "Bypass manual confirmation step")
 	shCmd.Flags().AddFlag(filterFlag)
 	RootCmd.AddCommand(shCmd)
 
