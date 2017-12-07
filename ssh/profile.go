@@ -22,6 +22,25 @@ type Profile struct {
 	Tunnels  []string `yaml:"tunnels,omitempty"`
 }
 
+// Clone creates a copy of the Profile.
+func (this *Profile) Clone() *Profile {
+	return &Profile{
+		User:     this.User,
+		Identity: this.Identity,
+		Tunnel:   this.Tunnel,
+		Tunnels:  this.Tunnels[:],
+	}
+}
+
+// NoTunnels creates a clone of the Profile with any tunnels disabled.
+func (this *Profile) NoTunnels() *Profile {
+	p := this.Clone()
+	p.Tunnel = ""
+	p.Tunnels = []string{}
+
+	return p
+}
+
 func (this *Profile) GetUser() string {
 	if this.User == "" {
 		this.User = DefaultProfile.User

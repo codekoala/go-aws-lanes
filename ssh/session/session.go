@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/codekoala/go-aws-lanes"
+	"github.com/codekoala/go-aws-lanes/ssh"
 )
 
 type Session struct {
@@ -30,10 +31,10 @@ func (this *Session) GetName() string {
 	return this.svr.Name
 }
 
-func (this *Session) Run(ctx context.Context, args ...string) (err error) {
+func (this *Session) Run(ctx context.Context, profile *ssh.Profile, args ...string) (err error) {
 	this.Buffer.Reset()
 
-	this.cmd = this.svr.GetSSHCommand(ctx, args)
+	this.cmd = this.svr.GetSSHCommandWithProfile(ctx, profile, args)
 	this.cmd.Stdin = nil
 	this.cmd.Stderr = this.Buffer
 	this.cmd.Stdout = this.Buffer

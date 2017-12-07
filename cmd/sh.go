@@ -84,7 +84,7 @@ func runInParallel(servers []*lanes.Server, sh string) (result error) {
 	mani := manidator.New()
 	for _, svr := range servers {
 		sess := session.New(svr)
-		if err := sess.Run(ctx, sh); err != nil {
+		if err := sess.Run(ctx, svr.Profile().NoTunnels(), sh); err != nil {
 			result = multierror.Append(result, err)
 			continue
 		}

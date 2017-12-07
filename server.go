@@ -26,6 +26,11 @@ type Server struct {
 	profile *ssh.Profile
 }
 
+// Profile returns the SSH profile used to access this server.
+func (this *Server) Profile() *ssh.Profile {
+	return this.profile
+}
+
 // Login attempts to SSH into the server using the default profile.
 func (this *Server) Login(ctx context.Context, args []string) error {
 	if this.profile == nil {
