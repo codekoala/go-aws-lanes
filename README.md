@@ -237,6 +237,17 @@ $ lanes sh prod 'ls -l'
 $ lanes sh prod --confirm 'ls -l'
 ```
 
+As of version 0.4.0, `lanes sh` supports running the specified command on
+multiple machines in parallel. There are three different options to enable
+parallel execution:
+
+* `--parallel` runs the specified command on all instances in the specified
+  lane at the same time.
+* `--num-parallel/-n N` runs the specified command on up to `N` instances in
+  the specified line at the same time.
+* `--pparallel N` runs the specified command on up to `N%` of the instances in
+  the specified lane at the same time.
+
 ### Push Files to All Lane Instances
 
 Examples:
