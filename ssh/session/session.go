@@ -27,11 +27,15 @@ func New(svr *lanes.Server) *Session {
 	}
 }
 
+func (this *Session) Profile() *ssh.Profile {
+	return this.svr.Profile().NoTunnels()
+}
+
 func (this *Session) GetName() string {
 	return this.svr.Name
 }
 
-func (this *Session) Run(ctx context.Context, profile *ssh.Profile, args ...string) (err error) {
+func (this *Session) Run(ctx context.Context, profile *ssh.Profile, args ...string) error {
 	this.Buffer.Reset()
 
 	this.cmd = this.svr.GetSSHCommandWithProfile(ctx, profile, args)
@@ -41,11 +45,7 @@ func (this *Session) Run(ctx context.Context, profile *ssh.Profile, args ...stri
 
 	this.WriteString(fmt.Sprintf("Executing on %s (%s): %s\n", this.svr.Name, this.svr.IP, args))
 
-	if err = this.cmd.Start(); err == nil {
-		go this.cmd.Wait()
-	}
-
-	return err
+	return this.cmd.Start()
 }
 
 func (this *Session) GetLastLine() string {
@@ -68,8 +68,12 @@ func (this *Session) IsClosed() bool {
 func (this *Session) Close() (err error) {
 	if this.cmd.Process != nil {
 		this.cmd.Process.Signal(os.Interrupt)
-		err = this.cmd.Wait()
+		err = this.Wait()
 	}
 
 	return err
+}
+
+func (this *Session) Wait() error {
+	return this.cmd.Wait()
 }

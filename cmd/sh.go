@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 
 	"github.com/codekoala/go-manidator"
 	"github.com/hashicorp/go-multierror"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"github.com/codekoala/go-aws-lanes"
 	"github.com/codekoala/go-aws-lanes/ssh/session"
@@ -19,6 +21,8 @@ func init() {
 
 	fl.BoolP("confirm", "c", false, "Bypass manual confirmation step")
 	fl.Bool("parallel", false, "Execute command on each target system in parallel")
+	fl.IntP("num-parallel", "n", 0, "Maximum number of target systems to execute command on in parallel")
+	fl.Int("pparallel", 0, "Maximum percentage of target systems to execute command on in parallel")
 }
 
 var shCmd = &cobra.Command{
@@ -41,7 +45,6 @@ var shCmd = &cobra.Command{
 		sh := fl.Arg(1)
 		prompt := fmt.Sprintf("\nType CONFIRM to execute %q on these machines:", sh)
 		confirmed, _ := fl.GetBool("confirm")
-		inParallel, _ := fl.GetBool("parallel")
 
 		filter, _ := fl.GetString("filter")
 		if servers, err = DisplayFilteredLaneAndConfirm(lane, filter, prompt, confirmed); err != nil {
@@ -49,8 +52,10 @@ var shCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if inParallel {
-			result = runInParallel(servers, sh)
+		numParallel := getNumParallel(fl, len(servers))
+		cmd.Printf("Executing on %d servers in parallel\n", numParallel)
+		if numParallel > 0 {
+			result = runInParallel(numParallel, servers, sh)
 		} else {
 			result = runInSequence(servers, sh)
 		}
@@ -62,6 +67,34 @@ var shCmd = &cobra.Command{
 	},
 }
 
+// getNumParallel determines the number of servers to execute commands on in parallel based on the command line flags.
+func getNumParallel(flags *pflag.FlagSet, total int) int {
+	inParallel, _ := flags.GetBool("parallel")
+	numParallel, _ := flags.GetInt("num-parallel")
+	percParallel, _ := flags.GetInt("pparallel")
+
+	if percParallel > 0 {
+		// calculate number of instances to hit in parallel
+		numParallel = int((float64(percParallel) / 100.0) * float64(total))
+	} else if numParallel > 0 {
+		// done
+	} else if inParallel {
+		numParallel = total
+	} else {
+		numParallel = -1
+	}
+
+	// do a little bounds checking
+	if numParallel <= 0 {
+		numParallel = 1
+	} else if numParallel > total {
+		numParallel = total
+	}
+
+	return numParallel
+}
+
+// runInSequence runs the specified command on each server in sequence.
 func runInSequence(servers []*lanes.Server, sh string) (result error) {
 	for _, svr := range servers {
 		fmt.Printf("=====\nExecuting on %s (%s): %s\n", svr.Name, svr.IP, sh)
@@ -73,27 +106,53 @@ func runInSequence(servers []*lanes.Server, sh string) (result error) {
 	return result
 }
 
-func runInParallel(servers []*lanes.Server, sh string) (result error) {
-	var sessions []*session.Session
+// runInParallel runs the specified command on numParallel servers at the same time.
+func runInParallel(numParallel int, servers []*lanes.Server, sh string) (result error) {
+	var (
+		sessions []*session.Session
+		wg       sync.WaitGroup
+	)
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, os.Kill)
 	ctx, cancel := context.WithCancel(context.Background())
 
-	fmt.Printf("Executing on %d servers: %s\n", len(servers), sh)
+	// used to block commands until there is enough capacity
+	limit := make(chan struct{}, numParallel)
+
+	// handle keyboard interrupts
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, os.Kill)
+
+	// immediately add each server to the manidator
 	mani := manidator.New()
 	for _, svr := range servers {
 		sess := session.New(svr)
-		if err := sess.Run(ctx, svr.Profile().NoTunnels(), sh); err != nil {
-			result = multierror.Append(result, err)
-			continue
-		}
-
-		mani.Add(sess)
 		sessions = append(sessions, sess)
+		mani.Add(sess)
 	}
 
+	fmt.Printf("Executing on %d servers: %s\n", len(servers), sh)
 	mani.Begin(ctx)
+
+	// launch at most numParallel commands at one time
+	for _, s := range sessions {
+		limit <- struct{}{}
+		wg.Add(1)
+
+		go func(sess *session.Session) {
+			if err := sess.Run(ctx, sess.Profile(), sh); err != nil {
+				result = multierror.Append(result, err)
+			}
+
+			sess.Wait()
+			<-limit
+			wg.Done()
+		}(s)
+	}
+
+	// no more commands allowed
+	close(limit)
+
+	// wait for either all commands to finish or for lanes to be interruped
 	select {
 	case <-stop:
 		fmt.Println("canceled")
@@ -101,8 +160,12 @@ func runInParallel(servers []*lanes.Server, sh string) (result error) {
 	case <-mani.Done():
 		fmt.Println("done")
 	}
-	mani.Stop()
 
+	// allow everything to finish up cleanly
+	mani.Stop()
+	wg.Wait()
+
+	// display ALL output from the command each server, grouped by server
 	for _, sess := range sessions {
 		fmt.Printf("=========== OUTPUT FROM %s ===========\n%s\n", sess.GetName(), sess.String())
 	}
