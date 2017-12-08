@@ -73,7 +73,7 @@ user acceptance testing, and one called "prod" for production servers.
 For example:
 
 ```shell
-$ curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.3.1/lanes_linux_amd64
+$ curl -Lo /tmp/lanes https://github.com/codekoala/go-aws-lanes/releases/download/v0.4.0/lanes_linux_amd64
 $ chmod +x /tmp/lanes
 $ sudo mv /tmp/lanes /usr/local/bin/lanes
 ```
@@ -208,7 +208,7 @@ print $4":\n \
 "}' > /etc/salt/roster
 ```
 
-As of version 0.3.2, the `list`/`ls` command also supports dumping the server
+As of version 0.4.0, the `list`/`ls` command also supports dumping the server
 table in CSV format using the `--csv` argument.
 
 ### SSH Into Instance
