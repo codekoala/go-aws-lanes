@@ -22,3 +22,5 @@ import:
 - package: github.com/mitchellh/go-homedir
 - package: github.com/mattn/go-isatty
   version: ^0.0.3
+- package: github.com/codekoala/go-manidator
+  version: ^0.1.0

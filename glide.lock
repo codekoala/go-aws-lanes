@@ -1,12 +1,12 @@
-hash: 1bb461bb51f03c0135b1f6773b165ca2bfabacecd3befc99cfda7eebc492920f
-updated: 2017-11-06T15:09:00.373613767-05:00
+hash: e548bf9ab9e8b819dbe1420405229a9cb1e02fd7ce74e7b3922c549d82e74d92
+updated: 2017-12-07T20:00:18.064948593-05:00
 imports:
 - name: github.com/apcera/termtables
   version: bcbc5dc54055d14996b256d348fb75cc6debe282
   subpackages:
   - term
 - name: github.com/aws/aws-sdk-go
-  version: d46843b92a3a8e377d7fe24b4d70fca37f923d00
+  version: 66ca5909f9d7ee2253b756ece0aa3c4970ce04e1
   subpackages:
   - aws
   - aws/awserr
@@ -35,6 +35,8 @@ imports:
   - service/sts
 - name: github.com/briandowns/spinner
   version: 48dbb65d7bd5c74ab50d53d04c949f20e3d14944
+- name: github.com/codekoala/go-manidator
+  version: 99244a078c72e0e9e869126f82d976a947c227b0
 - name: github.com/fatih/color
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
 - name: github.com/go-ini/ini
