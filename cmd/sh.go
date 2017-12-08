@@ -53,8 +53,8 @@ var shCmd = &cobra.Command{
 		}
 
 		numParallel := getNumParallel(fl, len(servers))
-		cmd.Printf("Executing on %d servers in parallel\n", numParallel)
-		if numParallel > 0 {
+		if numParallel > 1 {
+			cmd.Printf("Executing on %d servers in parallel\n", numParallel)
 			result = runInParallel(numParallel, servers, sh)
 		} else {
 			result = runInSequence(servers, sh)
@@ -81,7 +81,7 @@ func getNumParallel(flags *pflag.FlagSet, total int) int {
 	} else if inParallel {
 		numParallel = total
 	} else {
-		numParallel = -1
+		return -1
 	}
 
 	// do a little bounds checking
@@ -130,7 +130,7 @@ func runInParallel(numParallel int, servers []*lanes.Server, sh string) (result 
 		mani.Add(sess)
 	}
 
-	fmt.Printf("Executing on %d servers: %s\n", len(servers), sh)
+	fmt.Printf("Executing on %d server(s): %s\n", len(servers), sh)
 	mani.Begin(ctx)
 
 	// launch at most numParallel commands at one time
