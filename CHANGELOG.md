@@ -1,4 +1,4 @@
-## v0.4.1 (2017.12.??)
+## v0.4.1 (2017.12.08)
 
 * #21 - Commands are easier to specify
 
