@@ -12,7 +12,7 @@ install:
 script:
   - make test
   - TAG=$TRAVIS_COMMIT make -j2 linux osx
-  - [[ "$TRAVIS_TAG" ]] && make compress checksums
+  - bash -c "[[ $TRAVIS_TAG == '' ]] && make compress checksums"
 
 deploy:
   provider: releases
