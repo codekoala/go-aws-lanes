@@ -10,9 +10,11 @@ install:
 - glide install
 
 script:
-  - make test
-  - TAG=$TRAVIS_COMMIT make -j2 linux osx
-  - bash -c "[[ $TRAVIS_TAG == '' ]] && make compress checksums"
+- make test
+- TAG=$TRAVIS_COMMIT make -j2 linux osx
+
+before_deploy:
+- make compress checksums
 
 deploy:
   provider: releases
