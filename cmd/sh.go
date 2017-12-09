@@ -58,7 +58,7 @@ var shCmd = &cobra.Command{
 		if numParallel > 1 {
 			percParallel, _ := fl.GetInt("pparallel")
 			if percParallel > 0 {
-				cmd.Printf("Executing on %d%% (%d) servers in parallel\n", percParallel, numParallel)
+				cmd.Printf("Executing on %d (%d%%) servers in parallel\n", numParallel, percParallel)
 			} else {
 				cmd.Printf("Executing on %d servers in parallel\n", numParallel)
 			}
