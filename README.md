@@ -248,6 +248,19 @@ parallel execution:
 * `--pparallel N` runs the specified command on up to `N%` of the instances in
   the specified lane at the same time.
 
+As of version 0.4.1, the command for `lanes sh` does not require quotes (though
+that's still permitted). Commands can be specified after `--` as such:
+
+```bash
+# list all instances in the "prod" lane, confirming before executing the
+# specified command on each instance
+$ lanes sh prod -- ls -l
+
+# list all instances in the "prod" lane, executing the specified command on
+# each instance without confirmation
+$ lanes sh prod --confirm -- ls -l
+```
+
 ### Push Files to All Lane Instances
 
 Examples:

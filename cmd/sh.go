@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 
 	"github.com/codekoala/go-manidator"
@@ -26,9 +27,9 @@ func init() {
 }
 
 var shCmd = &cobra.Command{
-	Use:   `sh LANE "COMMAND"`,
+	Use:   `sh LANE COMMAND`,
 	Short: "Executes a command on all machines in the specified lane",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.MinimumNArgs(2),
 
 	PersistentPreRunE: RequireProfile,
 
@@ -41,9 +42,10 @@ var shCmd = &cobra.Command{
 			fl = cmd.Flags()
 		)
 
-		lane := fl.Arg(0)
-		sh := fl.Arg(1)
-		prompt := fmt.Sprintf("\nType CONFIRM to execute %q on these machines:", sh)
+		lane := args[0]
+		sh := args[1:]
+
+		prompt := fmt.Sprintf("\nType CONFIRM to execute %q on these machines:", strings.Join(sh, " "))
 		confirmed, _ := fl.GetBool("confirm")
 
 		filter, _ := fl.GetString("filter")
@@ -54,7 +56,13 @@ var shCmd = &cobra.Command{
 
 		numParallel := getNumParallel(fl, len(servers))
 		if numParallel > 1 {
-			cmd.Printf("Executing on %d servers in parallel\n", numParallel)
+			percParallel, _ := fl.GetInt("pparallel")
+			if percParallel > 0 {
+				cmd.Printf("Executing on %d%% (%d) servers in parallel\n", percParallel, numParallel)
+			} else {
+				cmd.Printf("Executing on %d servers in parallel\n", numParallel)
+			}
+
 			result = runInParallel(numParallel, servers, sh)
 		} else {
 			result = runInSequence(servers, sh)
@@ -95,10 +103,10 @@ func getNumParallel(flags *pflag.FlagSet, total int) int {
 }
 
 // runInSequence runs the specified command on each server in sequence.
-func runInSequence(servers []*lanes.Server, sh string) (result error) {
+func runInSequence(servers []*lanes.Server, sh []string) (result error) {
 	for _, svr := range servers {
-		fmt.Printf("=====\nExecuting on %s (%s): %s\n", svr.Name, svr.IP, sh)
-		if err := ConnectToServer(svr, sh); err != nil {
+		fmt.Printf("=====\nExecuting on %s (%s): %s\n", svr.Name, svr.IP, strings.Join(sh, " "))
+		if err := ConnectToServer(svr, sh...); err != nil {
 			result = multierror.Append(result, err)
 		}
 	}
@@ -107,7 +115,7 @@ func runInSequence(servers []*lanes.Server, sh string) (result error) {
 }
 
 // runInParallel runs the specified command on numParallel servers at the same time.
-func runInParallel(numParallel int, servers []*lanes.Server, sh string) (result error) {
+func runInParallel(numParallel int, servers []*lanes.Server, sh []string) (result error) {
 	var (
 		sessions []*session.Session
 		wg       sync.WaitGroup
@@ -130,7 +138,7 @@ func runInParallel(numParallel int, servers []*lanes.Server, sh string) (result 
 		mani.Add(sess)
 	}
 
-	fmt.Printf("Executing on %d server(s): %s\n", len(servers), sh)
+	fmt.Printf("Executing on %d server(s): %s\n", len(servers), strings.Join(sh, " "))
 	mani.Begin(ctx)
 
 	// launch at most numParallel commands at one time
@@ -139,7 +147,7 @@ func runInParallel(numParallel int, servers []*lanes.Server, sh string) (result 
 		wg.Add(1)
 
 		go func(sess *session.Session) {
-			if err := sess.Run(ctx, sess.Profile(), sh); err != nil {
+			if err := sess.Run(ctx, sess.Profile(), sh...); err != nil {
 				result = multierror.Append(result, err)
 			}
 

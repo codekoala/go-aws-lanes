@@ -1,3 +1,7 @@
+## v0.4.1 (2017.12.??)
+
+* #21 - Commands are easier to specify
+
 ## v0.4.0 (2017.12.07)
 
 * #19 - Support for running commands in parallel using `lanes sh`
