@@ -43,7 +43,7 @@ func (this *Session) Run(ctx context.Context, profile *ssh.Profile, args ...stri
 	this.cmd.Stderr = this.Buffer
 	this.cmd.Stdout = this.Buffer
 
-	this.WriteString(fmt.Sprintf("Executing on %s (%s): %s\n", this.svr.Name, this.svr.IP, args))
+	this.WriteString(fmt.Sprintf("Executing on %s (%s): %s\n", this.svr.Name, this.svr.IP, strings.Join(args, " ")))
 
 	return this.cmd.Start()
 }
