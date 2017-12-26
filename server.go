@@ -1,6 +1,7 @@
 package lanes
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -125,6 +126,7 @@ func FetchServersInLaneByKeyword(svc *ec2.EC2, lane, keyword string) ([]*Server,
 func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword string) (servers []*Server, err error) {
 	var (
 		out    *ec2.DescribeInstancesOutput
+		buf    = &bytes.Buffer{}
 		exists bool
 	)
 
@@ -132,9 +134,11 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword str
 	spin := spinner.New(spinner.CharSets[21], 50*time.Millisecond)
 	spin.Writer = os.Stderr
 	spin.Start()
+
 	defer func() {
 		spin.Stop()
 		fmt.Fprintln(os.Stderr, "done")
+		fmt.Fprintf(os.Stderr, buf.String())
 	}()
 
 	if out, err = svc.DescribeInstances(input); err != nil {
@@ -174,7 +178,7 @@ func FetchServersBy(svc *ec2.EC2, input *ec2.DescribeInstancesInput, keyword str
 			if config.profile != nil {
 				// assign appropriate profile to server
 				if svr.profile, exists = config.profile.SSH.Mods[svr.Lane]; !exists {
-					fmt.Fprintf(os.Stderr, "WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
+					fmt.Fprintf(buf, "WARNING: no profile found for %s in lane %q\n", svr, svr.Lane)
 					svr.profile = config.profile.SSH.Default
 					if svr.profile == nil {
 						svr.profile = &ssh.DefaultProfile
