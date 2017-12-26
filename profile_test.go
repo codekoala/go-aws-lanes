@@ -15,21 +15,21 @@ func TestProfileValidate(t *testing.T) {
 
 	assert.NotNil(t, p.Validate())
 
-	p.AWSAccessKeyId = "demo"
+	p.AWSAccessKeyID = "demo"
 	assert.NotNil(t, p.Validate())
 
 	p.AWSSecretAccessKey = "demo"
 	assert.Nil(t, p.Validate())
 
 	// default region set by env var
-	assert.Equal(t, p.Region, lanes.DEFAULT_REGION)
+	assert.Equal(t, p.Region, lanes.DefaultRegion)
 }
 
 func TestProfileActivate(t *testing.T) {
 	key := "AWS_ACCESS_KEY_ID"
 	secret := "AWS_SECRET_ACCESS_KEY"
 	p := &lanes.Profile{
-		AWSAccessKeyId:     "foo",
+		AWSAccessKeyID:     "foo",
 		AWSSecretAccessKey: "bar",
 	}
 

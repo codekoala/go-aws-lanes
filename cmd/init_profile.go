@@ -29,7 +29,7 @@ var initProfileCmd = &cobra.Command{
 		}
 
 		if nargs == 2 {
-			profile.AWSAccessKeyId = fl.Arg(1)
+			profile.AWSAccessKeyID = fl.Arg(1)
 		}
 
 		// prompt for profile name
@@ -46,9 +46,9 @@ var initProfileCmd = &cobra.Command{
 		}
 
 		// prompt for AWS access key
-		if profile.AWSAccessKeyId == "" {
+		if profile.AWSAccessKeyID == "" {
 			parseAccessKey := func(input string) error {
-				profile.AWSAccessKeyId = input
+				profile.AWSAccessKeyID = input
 				return nil
 			}
 

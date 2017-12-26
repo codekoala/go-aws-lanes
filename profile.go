@@ -15,7 +15,8 @@ import (
 )
 
 type Profile struct {
-	AWSAccessKeyId     string `yaml:"aws_access_key_id"`
+	AWSProfile         string `yaml:"aws_profile"`
+	AWSAccessKeyID     string `yaml:"aws_access_key_id"`
 	AWSSecretAccessKey string `yaml:"aws_secret_access_key"`
 	Region             string `yaml:"region,omitempty"`
 
@@ -176,12 +177,16 @@ func (this *Profile) SetOverwrite(value bool) {
 
 // Validate checks that the profile includes the necessary information to interact with AWS.
 func (this *Profile) Validate() error {
-	if this.AWSAccessKeyId == "" {
-		return ErrMissingAccessKey
-	}
+	if this.AWSProfile == "" {
+		if this.AWSAccessKeyID == "" {
+			return ErrMissingAccessKey
+		}
 
-	if this.AWSSecretAccessKey == "" {
-		return ErrMissingSecretKey
+		if this.AWSSecretAccessKey == "" {
+			return ErrMissingSecretKey
+		}
+	} else {
+		return ErrMissingAWSProfile
 	}
 
 	if this.global != nil {
@@ -197,12 +202,17 @@ func (this *Profile) Validate() error {
 
 // Activate sets some environment variables to access AWS using a given profile.
 func (this *Profile) Activate() {
-	os.Setenv("AWS_ACCESS_KEY_ID", this.AWSAccessKeyId)
-	os.Setenv("AWS_SECRET_ACCESS_KEY", this.AWSSecretAccessKey)
+	if this.AWSProfile != "" && this.AWSSecretAccessKey != "" {
+		os.Setenv("AWS_ACCESS_KEY_ID", this.AWSAccessKeyID)
+		os.Setenv("AWS_SECRET_ACCESS_KEY", this.AWSSecretAccessKey)
+	} else {
+		os.Setenv("AWS_PROFILE", this.AWSProfile)
+	}
 }
 
 // Deactivate unsets environment variables to no longer access AWS with this profile.
 func (this *Profile) Deactivate() {
+	os.Unsetenv("AWS_PROFILE")
 	os.Unsetenv("AWS_ACCESS_KEY_ID")
 	os.Unsetenv("AWS_SECRET_ACCESS_KEY")
 }
