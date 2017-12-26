@@ -176,17 +176,21 @@ func (this *Profile) SetOverwrite(value bool) {
 }
 
 // Validate checks that the profile includes the necessary information to interact with AWS.
-func (this *Profile) Validate() error {
-	if this.AWSProfile == "" {
-		if this.AWSAccessKeyID == "" {
-			return ErrMissingAccessKey
-		}
+func (this *Profile) Validate() (err error) {
+	if this.AWSAccessKeyID == "" {
+		err = multierror.Append(err, ErrMissingAccessKey)
+	}
 
-		if this.AWSSecretAccessKey == "" {
-			return ErrMissingSecretKey
+	if this.AWSSecretAccessKey == "" {
+		err = multierror.Append(err, ErrMissingSecretKey)
+	}
+
+	if err != nil {
+		if this.AWSProfile == "" {
+			err = ErrMissingAWSProfile
+		} else {
+			err = nil
 		}
-	} else {
-		return ErrMissingAWSProfile
 	}
 
 	if this.global != nil {
@@ -197,16 +201,19 @@ func (this *Profile) Validate() error {
 		this.Region = os.Getenv("LANES_REGION")
 	}
 
-	return nil
+	return err
 }
 
 // Activate sets some environment variables to access AWS using a given profile.
 func (this *Profile) Activate() {
-	if this.AWSProfile != "" && this.AWSSecretAccessKey != "" {
+	if this.AWSAccessKeyID != "" && this.AWSSecretAccessKey != "" {
 		os.Setenv("AWS_ACCESS_KEY_ID", this.AWSAccessKeyID)
 		os.Setenv("AWS_SECRET_ACCESS_KEY", this.AWSSecretAccessKey)
+		os.Unsetenv("AWS_PROFILE")
 	} else {
 		os.Setenv("AWS_PROFILE", this.AWSProfile)
+		os.Unsetenv("AWS_ACCESS_KEY_ID")
+		os.Unsetenv("AWS_SECRET_ACCESS_KEY")
 	}
 }
 
