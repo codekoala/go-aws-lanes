@@ -52,7 +52,7 @@ func GetSampleProfile() *Profile {
 
 // GetAvailableProfiles returns a list of all Lanes profiles found in the configuration directory.
 func GetAvailableProfiles() (found []string) {
-	matches, _ := filepath.Glob(filepath.Join(CONFIG_DIR, "*.yml"))
+	matches, _ := filepath.Glob(filepath.Join(ConfigDir, "*.yml"))
 	for _, match := range matches {
 		name := filepath.Base(strings.TrimSuffix(match, filepath.Ext(match)))
 		if name == "lanes" {
@@ -69,7 +69,7 @@ func GetAvailableProfiles() (found []string) {
 // GetProfilePath uses the specified name to return a path to the file that is expected to hold the configuration for
 // the named profile.
 func GetProfilePath(name string, checkPerms bool) string {
-	path := filepath.Join(CONFIG_DIR, name+".yml")
+	path := filepath.Join(ConfigDir, name+".yml")
 
 	if checkPerms {
 		CheckProfilePermissions(path)

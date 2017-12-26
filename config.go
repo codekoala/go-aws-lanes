@@ -10,18 +10,18 @@ import (
 )
 
 var (
-	// CONFIG_DIR is the directory where all Lanes configuration files are expected to exist.
-	CONFIG_DIR = EnvDefault("LANES_CONFIG_DIR", "$HOME/.lanes")
+	// ConfigDir is the directory where all Lanes configuration files are expected to exist.
+	ConfigDir = EnvDefault("LANES_CONFIG_DIR", "$HOME/.lanes")
 
-	// CONFIG is the path to the Lanes configuration file to use.
-	CONFIG = EnvDefault("LANES_CONFIG", "$LANES_CONFIG_DIR/lanes.yml")
+	// ConfigFile is the path to the Lanes configuration file to use.
+	ConfigFile = EnvDefault("LANES_CONFIG", "$LANES_CONFIG_DIR/lanes.yml")
 
-	// DEFAULT_REGION is the name of the default region to use. This can be customized at compile time.
-	DEFAULT_REGION = "us-west-2"
+	// DefaultRegion is the name of the default region to use. This can be customized at compile time.
+	DefaultRegion = "us-west-2"
 
-	// DEFAULT_TAG_NAME is the name of the default EC2 instance tag to use for determining an instance's name. This can
+	// DefaultTagName is the name of the default EC2 instance tag to use for determining an instance's name. This can
 	// be customized at compile time.
-	DEFAULT_TAG_NAME = "Name"
+	DefaultTagName = "Name"
 
 	// DEFAULT_TAG_LANE is the name of the default EC2 instance tag to use for determining an instance's lane. This can
 	// be customized at compile time.
@@ -77,7 +77,7 @@ type TagNames struct {
 
 // LoadConfig unmarshals the default YAML configuration file.
 func LoadConfig() (*Config, error) {
-	return LoadConfigFile(CONFIG)
+	return LoadConfigFile(ConfigFile)
 }
 
 // LoadConfigFile unmarshals the specified YAML file and returns a *Config.
@@ -110,13 +110,13 @@ func LoadConfigBytes(in []byte) (c *Config, err error) {
 
 	// return an error if no profile is set in the environment or the specified config file
 	if c.Profile == "" {
-		err = fmt.Errorf("no profile specified; please specify it in %s or set LANES_PROFILE in your environment", CONFIG)
+		err = fmt.Errorf("no profile specified; please specify it in %s or set LANES_PROFILE in your environment", ConfigFile)
 		return
 	}
 
 	c.DisableUTF8 = os.Getenv("LANES_DISABLE_UTF8") != "" || c.DisableUTF8
-	c.Region = EnvDefault("LANES_REGION", c.Region, DEFAULT_REGION)
-	c.Tags.Name = EnvDefault("LANES_TAG_NAME", c.Tags.Name, DEFAULT_TAG_NAME)
+	c.Region = EnvDefault("LANES_REGION", c.Region, DefaultRegion)
+	c.Tags.Name = EnvDefault("LANES_TAG_NAME", c.Tags.Name, DefaultTagName)
 	c.Tags.Lane = EnvDefault("LANES_TAG_LANE", c.Tags.Lane, DEFAULT_TAG_LANE)
 
 	// set a global config variable for later use
@@ -127,7 +127,7 @@ func LoadConfigBytes(in []byte) (c *Config, err error) {
 
 // Write saves the current settings to the default configuration file.
 func (this *Config) Write() (err error) {
-	return this.WriteFile(CONFIG)
+	return this.WriteFile(ConfigFile)
 }
 
 // WriteFile saves the current settings to the specified file.
@@ -159,7 +159,7 @@ func (this *Config) WriteBytes() ([]byte, error) {
 
 // GetProfilePath determines where the current Lanes profile configuration file should be found.
 func (this *Config) GetProfilePath() string {
-	return path.Join(CONFIG_DIR, this.Profile+".yml")
+	return path.Join(ConfigDir, this.Profile+".yml")
 }
 
 // SetProfile changes the desired profile.
@@ -182,7 +182,7 @@ func InitConfig(noProfile, force bool) (err error) {
 	var cfg *Config
 
 	fmt.Println("Initializing Lanes...")
-	if _, err = os.Stat(CONFIG); err == nil {
+	if _, err = os.Stat(ConfigFile); err == nil {
 		fmt.Printf("Lanes already appears to be configured! ")
 		if !force {
 			fmt.Println("Aborting.")
