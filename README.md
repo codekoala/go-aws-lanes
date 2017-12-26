@@ -314,6 +314,7 @@ The configuration for an individual lane lives in ``$HOME/.lanes/[lane profile
 name].yml`` by default. Here are the configuration options:
 
 ```yaml
+aws_profile: FADS
 aws_access_key_id: ASDF
 aws_secret_access_key: FDSA
 region: us-east-1
@@ -331,6 +332,9 @@ ssh:
       identity: ~/.ssh/id_rsa_prod
 ```
 
+* ``aws_profile``: the AWS profile to use from ``~/.aws/credentials``. This
+  does not take precedence over ``aws_access_key_id`` and
+  ``aws_secret_access_key``.
 * ``aws_access_key_id``: the AWS access key ID for the lane profile.
 * ``aws_secret_access_key``: the AWS secret access key for the lane profile.
 * ``region``: the default region for this lane profile. If not specified, the
