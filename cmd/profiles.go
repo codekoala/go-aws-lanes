@@ -24,7 +24,7 @@ var profilesCmd = &cobra.Command{
 		if batch {
 			format = "%s\n"
 		} else {
-			cmd.Println("Available profiles:\n")
+			cmd.Println("Available profiles:")
 		}
 
 		if fl.NArg() > 0 {
