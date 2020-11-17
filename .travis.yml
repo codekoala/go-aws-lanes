@@ -4,10 +4,6 @@ go:
 - 1.15.x
 #- master
 
-install:
-- curl https://glide.sh/get | sh
-- glide install
-
 script:
 - make test
 - TAG=$TRAVIS_COMMIT make -j2 linux osx
