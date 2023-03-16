@@ -1,6 +1,6 @@
 # build lanes for all platforms, compress the binaries, and produce SHA256 checksums
 all:
-	goreleaser release --snapshot --rm-dist
+	goreleaser release --snapshot --clean
 
 # run lanes tests
 test:
